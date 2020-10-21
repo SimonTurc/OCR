@@ -58,37 +58,43 @@ void vertical_segmentation(SDL_Surface* image){
     
     while (column < width)
     {
+	isBlack = 0;
+	isRed = 0;
 	while (row < height)
 	{
 	    Uint32 pixel = get_pixel(image, column, row);
 	    Uint8 r, g, b;
 	    SDL_GetRGB(pixel, image->format, &r, &g, &b);
-	    if (r == 255 || isRed != 1)
+	    if (r == 255 && isRed != 1)
 	    {
 		isRed = 1;
 		FirstBlank = row;
 		isBlack = 0;
 	    }
 	     
-	    if (r != 127 || isRed == 1)
+	    if (r != 127 && isRed == 1)
 	    {
 
 		if (r == 0) 
 		{
-		    row = FirstBlank; //Go to the next 
+		     //Go to the next 
 		    isBlack = 1;
 		}
 	    }
 
-	    if ((r == 127 || isRed == 1) && isBlack != 1)
+	    if (r == 127 && isRed == 1)
 	    {
+	       
 		isRed = 0;
-		isBlack = 0;
-		for (int k = FirstBlank; k < height; k++)
+		if (isBlack != 1)
 		{
-		    pixel = SDL_MapRGB(image->format , 127 , 0 , 0);
-		    put_pixel(image, column, k, pixel);	       
+		    for (int k = FirstBlank; k < row; k++)
+		    {
+			pixel = SDL_MapRGB(image->format , 127 , 0 , 0);
+			put_pixel(image, column, k, pixel);	       
+		    }
 		}
+		isBlack = 0;
 	    }
 	    row++;
 	    
