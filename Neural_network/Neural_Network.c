@@ -1,6 +1,8 @@
 #include "backprop.h"
 #include "layer.h"
 #include "neuron.h"
+#include "layer.c"
+#include "neuron.c"
 
 
 layer *lay = NULL;
