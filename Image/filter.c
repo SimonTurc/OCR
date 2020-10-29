@@ -3,6 +3,10 @@
 #include "filter.h"
 #include <math.h>
 
+/*
+ * Fonction permettant remplacer le pixel lumineux par du blanc et les pixels sombres par du noir
+ */
+
 void binarization(SDL_Surface* image){
     int width = image -> w;
     int height = image -> h;
@@ -30,6 +34,10 @@ void binarization(SDL_Surface* image){
     }
 }
 
+/*
+ * Filtre de niveau de gris
+ */
+
 void grayscale(SDL_Surface* image){
     int width = image -> w;
     int height = image -> h;
@@ -49,20 +57,31 @@ void grayscale(SDL_Surface* image){
     }
 }
 
-double gaussian(int x,int y, double sigma)
+
+
+/*double gaussian(int x,int y, double sigma)
 {
     return 1. / (2* M_PI * sigma * sigma) * exp(-(x * x + y * y) / (2 * sigma * sigma));
-}
+}*/
+
+
+/*
+ * Fonction de construction d'un kernel(= matrice à appliquer sur l'image)
+ */
 
 void Buildkernel(size_t x , size_t y, double filter[x][y])
 {
-    double sigma = 0.84089642;
+    //double sigma = 0.84089642;
 
     for(size_t i = 0; i < x; i++)
 	for(size_t j = 0; j < y; j++)
-	    filter[i][j] = gaussian(x , y, sigma);
+	    filter[i][j] = 1;               //gaussian(x , y, sigma);
 }
 
+
+/*
+ * Fonction qui applique cette matrice sur l'ensemble de l'image
+ */
 
 void applyingfilter(SDL_Surface* image)
 {

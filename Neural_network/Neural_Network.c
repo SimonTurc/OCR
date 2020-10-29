@@ -2,7 +2,7 @@
 #include "layer.h"
 #include "neuron.h"
 
-layer create_layer(int number_of_neurons)
+/*layer create_layer(int number_of_neurons)
 {
 	layer lay;
 	lay.num_neu = -1;
@@ -25,7 +25,7 @@ neuron create_neuron(int num_out_weights)
 	neu.dz = 0.0;
 
 	return neu;
-}
+	}*/
 
 layer *lay = NULL;
 int num_layers;

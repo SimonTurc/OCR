@@ -21,11 +21,11 @@ int main()
     screen_surface = display_image(image_surface);
     
 
-
+    
     wait_for_keypressed();
 
     grayscale(image_surface);
-
+    
     binarization(image_surface);
 
     update_surface(screen_surface, image_surface);
