@@ -2,30 +2,6 @@
 #include "layer.h"
 #include "neuron.h"
 
-/*layer create_layer(int number_of_neurons)
-{
-	layer lay;
-	lay.num_neu = -1;
-	lay.neu = (struct neuron_t *) malloc(number_of_neurons * sizeof(struct neuron_t));
-	return lay;
-}
-
-neuron create_neuron(int num_out_weights)
-{
-	neuron neu;
-
-	neu.actv = 0.0;
-	neu.out_weights = (float*) malloc(num_out_weights * sizeof(float));
-	neu.bias=0.0;
-	neu.z = 0.0;
-
-	neu.dactv = 0.0;
-	neu.dw = (float*) malloc(num_out_weights * sizeof(float));
-	neu.dbias = 0.0;
-	neu.dz = 0.0;
-
-	return neu;
-	}*/
 
 layer *lay = NULL;
 int num_layers;
@@ -94,7 +70,8 @@ int main(void)
     get_desired_outputs();
 
     train_neural_net();
-    test_nn();
+    serialize();
+    //test_nn();
 
     if(dinit()!= SUCCESS_DINIT)
     {
@@ -257,8 +234,6 @@ void train_neural_net(void)
     }
 }
 
-
-
 void update_weights(void)
 {
     int i,j,k;
@@ -384,6 +359,27 @@ void back_prop(int p)
             lay[i].neu[j].dbias = lay[i].neu[j].dz;
         }
     }
+}
+
+// Serialize the network
+void serialize(void)
+{
+    FILE *file = fopen("bot.txt","w+");
+    fprintf(file,"num_layers = %d \n",num_layers);
+    for (size_t i = 0; i < num_layers ; i++)
+    {
+        fprintf(file,"num_neurons = %d \n",num_neurons[i]);
+        for(size_t j=0;j<num_neurons[i];j++)
+        {
+            fprintf(file,"Bias = %f \n",lay[i].neu[j].bias);
+            for(size_t k = 0; k <num_neurons[i+1];k++)
+            {
+                // Update Weights
+                fprintf(file,"Weight = %f \n",lay[i].neu[j].out_weights[k]);
+            }
+        }
+    }   
+    fclose(file);
 }
 
 // Test the trained network
