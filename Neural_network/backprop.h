@@ -33,6 +33,7 @@ void get_inputs(void);
 void get_desired_outputs(void);
 void test_nn(void);
 void serialize(void);
+void deserialize(char *bot);
 
 int initialize_dummy_weights(void);
 

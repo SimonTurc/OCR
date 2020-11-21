@@ -1,6 +1,7 @@
 #include "backprop.h"
 #include "layer.h"
 #include "neuron.h"
+#define MAX_LENGHT 20
 
 
 layer *lay = NULL;
@@ -16,8 +17,8 @@ int n=1;
 
 int main(void)
 {
-    int i;
-
+    /*int i;
+    
     printf("Enter the number of Layers in Neural Network:\n");
     scanf("%d",&num_layers);
 
@@ -68,10 +69,11 @@ int main(void)
 
     // Get Output Labels
     get_desired_outputs();
-
+    
     train_neural_net();
-    serialize();
-    //test_nn();
+    serialize();*/
+    deserialize("bot.txt");
+    test_nn();
 
     if(dinit()!= SUCCESS_DINIT)
     {
@@ -365,20 +367,56 @@ void back_prop(int p)
 void serialize(void)
 {
     FILE *file = fopen("bot.txt","w+");
-    fprintf(file,"num_layers = %d \n",num_layers);
+    fprintf(file,"%d\n",num_layers);
     for (size_t i = 0; i < num_layers ; i++)
     {
-        fprintf(file,"num_neurons = %d \n",num_neurons[i]);
+        fprintf(file,"%d\n",num_neurons[i]);
+    }
+    for (size_t i = 0; i < num_layers ; i++)
+    {
         for(size_t j=0;j<num_neurons[i];j++)
         {
-            fprintf(file,"Bias = %f \n",lay[i].neu[j].bias);
+            fprintf(file,"%f\n",lay[i].neu[j].bias);
             for(size_t k = 0; k <num_neurons[i+1];k++)
             {
-                // Update Weights
-                fprintf(file,"Weight = %f \n",lay[i].neu[j].out_weights[k]);
+                fprintf(file,"%f\n",lay[i].neu[j].out_weights[k]);
             }
         }
-    }   
+    }
+    printf("A bot.txt has been created\n");  
+    fclose(file);
+}
+
+// Deserialize a bot.txt
+void deserialize(char *bot)
+{
+    FILE *file = fopen(bot,"r");
+    char str[MAX_LENGHT] = ""; 
+    fgets(str,MAX_LENGHT, file);
+    num_layers = atoi(str);
+    num_neurons = (int*) malloc(num_layers * sizeof(int));
+    for (size_t i = 0; i < num_layers; i++)
+    {
+        fgets(str,MAX_LENGHT, file);
+        num_neurons[i] = atoi(str);
+        printf("%d \n",num_neurons[i]);
+    }
+    init();
+    for (size_t i = 0; i < num_layers; i++)
+    {
+        for (size_t j= 0; j < num_neurons[i]; j++)
+        {
+            fgets(str,MAX_LENGHT, file);
+            lay[i].neu[j].bias = atof(str);
+            for(size_t k = 0; k < num_neurons[i+1]; k++)
+            {
+                fgets(str,MAX_LENGHT, file);
+                lay[i].neu[j].out_weights[k] = atof(str);
+                printf("%ld:w[%ld][%ld]: %f\n",k,i,j, lay[i].neu[j].out_weights[k]);
+            }
+        }
+    }
+    printf("A neural network has been successfully created\n"); 
     fclose(file);
 }
 
@@ -386,7 +424,8 @@ void serialize(void)
 void test_nn(void) 
 {
     int i;
-    while(1)
+    int j;
+    while(j <5)
     {
         printf("Enter input to test:\n");
 
@@ -395,6 +434,7 @@ void test_nn(void)
             scanf("%f",&lay[0].neu[i].actv);
         }
         forward_prop();
+        j++;
     }
 }
 
