@@ -34,6 +34,7 @@ void get_desired_outputs(void);
 void test_nn(void);
 void serialize(void);
 void deserialize(char *bot);
+void Normalize_matrix(int num_train_actual);
 
 int initialize_dummy_weights(void);
 
