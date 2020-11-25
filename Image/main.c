@@ -17,9 +17,6 @@ int main()
     init_sdl();
     
     image = load_image("test_image/test.jpg");
-
-    
-    printf("%u\n",value);
     
     screen_surface = display_image(image);
 
@@ -29,8 +26,8 @@ int main()
 
     grayscale(image);
 
-    unsigned int value = Otsu_Method(image);
-    binarization(image, value);
+    unsigned int otsu_value = Otsu_Method(image);
+    binarization(image, otsu_value);
 
     update_surface(screen_surface, image);
 
