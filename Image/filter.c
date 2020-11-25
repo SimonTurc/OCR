@@ -1,3 +1,4 @@
+#include <err.h>
 #include "basics/pixel_operations.h"
 #include "basics/sdl_basics.h"
 #include <math.h>
@@ -11,7 +12,10 @@ unsigned int Otsu_Method(SDL_Surface* image){
     int width = image -> w;
     int height = image -> h;
     
-    int histo[256];
+    int *histo = calloc(256, sizeof(int));
+    if (histo == NULL)
+	errx(1, "Not enough memory!");
+    
     int number_of_pixels = 0;
 
     double q1 = 0;
@@ -27,8 +31,8 @@ unsigned int Otsu_Method(SDL_Surface* image){
     double tmp = 0;
     unsigned int value = 0;
 
-    for(size_t k = 0; k < 256; k++)
-	histo[k] = 0;
+    //for(size_t k = 0; k < 256; k++)
+    //histo[k] = 0;
 
     
     for (int i = 0; i < width; i++)
@@ -50,12 +54,12 @@ unsigned int Otsu_Method(SDL_Surface* image){
     for (unsigned int v = 0; v < 256; v++)
     {
 	s1 += histo[v];
-	s2 += histo[256 - v];
+	s2 += histo[255 - v];
 
 	w1 = s1 / number_of_pixels;
 	w2 = s2 / number_of_pixels;
 	q1 += v * histo[v];
-	q2 += (256 - v) * histo[256 - v];
+	q2 += (255 - v) * histo[255 - v];
 
 	m1 = q1 / s1;
 	m2 = q2 / s2;
@@ -71,6 +75,7 @@ unsigned int Otsu_Method(SDL_Surface* image){
 	   
     }
 
+    free(histo);
     return value;
 }
 
@@ -128,70 +133,54 @@ void grayscale(SDL_Surface* image){
 }
 
 
-
-/*double gaussian(int x,int y, double sigma)
-{
-    return 1. / (2* M_PI * sigma * sigma) * exp(-(x * x + y * y) / (2 * sigma * sigma));
-}*/
-
-
 /*
- * Fonction de construction d'un kernel(= matrice à appliquer sur l'image)
+ * Fonction qui applique le gaussian filter
  */
 
-void Buildkernel(size_t x , size_t y, double filter[x][y])
-{
-    //double sigma = 0.84089642;
-
-    for(size_t i = 0; i < x; i++)
-	for(size_t j = 0; j < y; j++)
-	    filter[i][j] = 1;               //gaussian(x , y, sigma);
-}
-
-
-/*
- * Fonction qui applique cette matrice sur l'ensemble de l'image
- */
-
-void applyingfilter(SDL_Surface* image)
+void gaussian_filter(SDL_Surface* image)
 {
     int width = image -> w;
     int height = image -> h;
-
-    Uint32 rSum = 0;
-    Uint32 gSum = 0;
-    Uint32 bSum = 0;
-
-    double kernel[3][3];
-    Buildkernel(3,3,kernel);
+    int pixel_x = 0;
+    int pixel_y = 0;
     
-    for (int i = 1; i < width - 1; i++)
+    /* 5x5 Filterfloat gaussian_kernel[] = {0.00390625, 0.015625,  0.0234375,  0.015625, 0.00390625 ,
+				 0.015625, 0.0625, 0.09375, 0.0625, 0.015625,
+				 0.0234375, 0.09375, 0.140625, 0.09375, 0.0234375,
+				 0.015625, 0.0625, 0.09375, 0.0625, 0.015625,
+				 0.00390625 , 0.015625,  0.0234375,  0.015625, 0.00390625 };*/
+
+
+    float gaussian_kernel[] = {0.0625, 0.125, 0.0625,
+                               0.125, 0.25, 0.125,
+			       0.0625, 0.125, 0.0625};
+	
+    int offset = 3 / 2;
+    
+    for(int i = offset; i < width - offset ; i++)
     {
-	for (int j = 1; j < height - 1;j++)
+	for(int j = offset; j < height - offset; j++)
 	{
-	    
-	    for( int i_around = -1 ; i_around <= 1; i_around++)
+	    Uint32 pixel = get_pixel(image, i, j);
+	    unsigned int  acc[3] = {0 , 0 , 0};
+	    for(int x = 0; x < 3; x++)
 	    {
-		for( int j_around = -1; j_around <= 1; j_around++)
+		for(int y = 0; y < 3; y++)
 		{
-		    Uint32 pixel = get_pixel(image, i + i_around, j + j_around);
-		    Uint8 r, g, b;
-		    SDL_GetRGB(pixel, image->format, &r, &g, &b);
-		    
-		    rSum += r * kernel[1 + i_around][1 + j_around];
-		    gSum += g * kernel[1 + i_around][1 + j_around];
-		    bSum += b * kernel[1 + i_around][1 + j_around];
+		    pixel_x = i + x - offset;
+		    pixel_y = j + y - offset;
+
+		     Uint32 pixel2 = get_pixel(image, pixel_x, pixel_y);
+		     Uint8 r, g, b;
+		     SDL_GetRGB(pixel2, image->format, &r, &g, &b);
+
+		     acc[0] += r * gaussian_kernel[x * 3 + y];
+		     acc[1] += g * gaussian_kernel[x * 3 + y];
+		     acc[2] += b * gaussian_kernel[x * 3 + y];
 		}
 	    }
-
-	    Uint32 new_pixel = get_pixel(image, i, j);
-	    
-	    rSum = rSum/9;
-	    gSum = gSum/9;
-	    bSum = bSum/9;
-	    
-	    new_pixel = SDL_MapRGB(image->format, rSum, gSum, bSum);
-	    put_pixel(image, i, j, new_pixel);
+	    pixel = SDL_MapRGB(image->format, acc[0], acc[1], acc[2]);
+	    put_pixel(image, i, j, pixel);
 	    
 	}
     }

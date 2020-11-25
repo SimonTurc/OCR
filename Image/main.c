@@ -16,24 +16,27 @@ int main()
     
     init_sdl();
     
-    image = load_image("test_image/test.jpg");
+    image = load_image("test_image/test2.bmp");
     
     screen_surface = display_image(image);
 
 
     
     wait_for_keypressed();
-
+    
     grayscale(image);
 
+    gaussian_filter(image);
+    
     unsigned int otsu_value = Otsu_Method(image);
     binarization(image, otsu_value);
 
+
     update_surface(screen_surface, image);
 
-
-
-
+    
+    
+    
     wait_for_keypressed();
 
     horizontal_segmentation(image);
@@ -45,7 +48,7 @@ int main()
     vertical_segmentation(image);
 
     update_surface(screen_surface, image);
-
+    
 
 
 
