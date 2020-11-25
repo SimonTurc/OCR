@@ -1,5 +1,5 @@
-#include "pixel_operations.h"
-#include "sdl_basics.h"
+#include "basics/pixel_operations.h"
+#include "basics/sdl_basics.h"
 #include "segmentation.h"
 #include <stdio.h>
 

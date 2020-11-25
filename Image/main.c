@@ -1,50 +1,57 @@
 #include <err.h>
 #include "SDL/SDL.h"
 #include "SDL/SDL_image.h"
-#include "pixel_operations.h"
-#include "sdl_basics.h"
+#include "basics/pixel_operations.h"
+#include "basics/sdl_basics.h"
 #include "filter.h"
 #include "segmentation.h"
+#include <stdio.h>
 
 
 int main()
 {
-    SDL_Surface* image_surface;
+    SDL_Surface* image;
     SDL_Surface* screen_surface;
 
     
-    
     init_sdl();
     
-    image_surface = load_image("test.jpg");
-
-    screen_surface = display_image(image_surface);
+    image = load_image("test_image/test.jpg");
     
+    screen_surface = display_image(image);
 
-    
-    wait_for_keypressed();
 
-    grayscale(image_surface);
-    
-    binarization(image_surface);
-
-    update_surface(screen_surface, image_surface);
-
-    wait_for_keypressed();
-
-    horizontal_segmentation(image_surface);
-    
-    update_surface(screen_surface, image_surface);
     
     wait_for_keypressed();
 
-    vertical_segmentation(image_surface);
+    grayscale(image);
 
-    update_surface(screen_surface, image_surface);
+    unsigned int otsu_value = Otsu_Method(image);
+    binarization(image, otsu_value);
+
+    update_surface(screen_surface, image);
+
+
+
 
     wait_for_keypressed();
 
-    SDL_FreeSurface(image_surface);
+    horizontal_segmentation(image);
+    
+    update_surface(screen_surface, image);
+    
+    wait_for_keypressed();
+
+    vertical_segmentation(image);
+
+    update_surface(screen_surface, image);
+
+
+
+
+    wait_for_keypressed();
+
+    SDL_FreeSurface(image);
 
     SDL_FreeSurface(screen_surface);
 
