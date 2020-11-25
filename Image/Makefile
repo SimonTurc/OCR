@@ -9,11 +9,8 @@ LDLIBS= `pkg-config --libs sdl` -lSDL_image
 
 all: main
 
-main: pixel_operations.o  sdl_basics.o filter.o segmentation.o
+main: basics/pixel_operations.o  basics/sdl_basics.o filter.o segmentation.o
 
-filter.o: pixel_operations.h sdl_basics.h filter.h
-
-segmentation.o: pixel_operations.h sdl_basics.h segmentation.h
 
 clean:
 	${RM} *.o
