@@ -16,7 +16,7 @@ int main()
     
     init_sdl();
     
-    image = load_image("test_image/test2.bmp");
+    image = load_image("test_image/test.jpg");
     
     screen_surface = display_image(image);
 
@@ -26,15 +26,17 @@ int main()
     
     grayscale(image);
 
-    gaussian_filter(image);
+    float gaussian_kernel[] = {0.0625, 0.125, 0.0625,
+                               0.125, 0.25, 0.125,
+			       0.0625, 0.125, 0.0625};
+  
+    applying_filter(image, gaussian_kernel);
     
     unsigned int otsu_value = Otsu_Method(image);
     binarization(image, otsu_value);
 
-
     update_surface(screen_surface, image);
 
-    
     
     
     wait_for_keypressed();

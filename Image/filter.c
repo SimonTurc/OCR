@@ -137,23 +137,12 @@ void grayscale(SDL_Surface* image){
  * Fonction qui applique le gaussian filter
  */
 
-void gaussian_filter(SDL_Surface* image)
+void applying_filter(SDL_Surface* image, float kernel[])
 {
     int width = image -> w;
     int height = image -> h;
     int pixel_x = 0;
     int pixel_y = 0;
-    
-    /* 5x5 Filterfloat gaussian_kernel[] = {0.00390625, 0.015625,  0.0234375,  0.015625, 0.00390625 ,
-				 0.015625, 0.0625, 0.09375, 0.0625, 0.015625,
-				 0.0234375, 0.09375, 0.140625, 0.09375, 0.0234375,
-				 0.015625, 0.0625, 0.09375, 0.0625, 0.015625,
-				 0.00390625 , 0.015625,  0.0234375,  0.015625, 0.00390625 };*/
-
-
-    float gaussian_kernel[] = {0.0625, 0.125, 0.0625,
-                               0.125, 0.25, 0.125,
-			       0.0625, 0.125, 0.0625};
 	
     int offset = 3 / 2;
     
@@ -174,9 +163,9 @@ void gaussian_filter(SDL_Surface* image)
 		     Uint8 r, g, b;
 		     SDL_GetRGB(pixel2, image->format, &r, &g, &b);
 
-		     acc[0] += r * gaussian_kernel[x * 3 + y];
-		     acc[1] += g * gaussian_kernel[x * 3 + y];
-		     acc[2] += b * gaussian_kernel[x * 3 + y];
+		     acc[0] += r * kernel[x * 3 + y];
+		     acc[1] += g * kernel[x * 3 + y];
+		     acc[2] += b * kernel[x * 3 + y];
 		}
 	    }
 	    pixel = SDL_MapRGB(image->format, acc[0], acc[1], acc[2]);
