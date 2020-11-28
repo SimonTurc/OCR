@@ -1,6 +1,9 @@
 #include <stdio.h>
-#include "segmentation.h"
 #include "extraction.h"
+#include <stdlib.h>
+#include <SDL.h>
+#include "basics/pixel_operations.h"
+#include "basics/sdl_basics.h"
 
 
 void get_length(SDL_Surface* image,int row,int col, int width, int height, int *x, int *y)
@@ -39,10 +42,10 @@ void get_length(SDL_Surface* image,int row,int col, int width, int height, int *
 }
 
 
-void init_matrix
+/*void init_matrix()
 {
-  m = malloc(sizeof(int)* x * y);
-}
+  m = malloc(sizeof(int)* (*x) * (*y));
+}*/
 
 void fill_matrix(SDL_Surface* image, int start_row, int start_column)
 {
@@ -59,10 +62,21 @@ void fill_matrix(SDL_Surface* image, int start_row, int start_column)
 	   Uint8 r, g, b;
 	   SDL_GetRGB(pixel, image->format, &r, &g, &b);
 	   if(r == 0)
-	      *m[row * (*y) + column] = 1;
+	     {
+	       //*m[row * (*y) + column] = 1;
+	       pixel = SDL_MapRGB(image->format , 0 , 0 , 200);
+	       put_pixel(image, row, column, pixel);
+	     }
 	   else
-	     *m[row * (*y) + column] = 0;
+	     {
+	       //*m[row * (*y) + column] = 0;
+	       pixel = SDL_MapRGB(image->format , 0 , 0 , 200);
+	       put_pixel(image, row, column, pixel);
+	     }
+	   column++;
 	 }
+       row++;
+       column = start_column;
      }
   
 }
@@ -90,17 +104,25 @@ void extraction(SDL_Surface* image)
 
 	    if(r != 127)//Go through the image and when we find a character 
 	      {
-		get_length(image,row, column, width, height, p, x, y);//First we get the length
-		init_matrix();//Then we create a matrix of with good 
-		fill_matrix();//And then we fill the matrix with 0 - 1
+		get_length(image,row, column, width, height, x, y);//First we get the length
+		//init_matrix();//Then we create a matrix with good dimensions
+		fill_matrix(image,row,column);//And then we fill the matrix with 0 - 1
 		column+= x; 
 	      }
 	    column++;
 	  }
 	row += y + 1;//On saute à la prochaine ligne rouge
 	column = 0;//Et on se replace au bord gauche de la page
+    }
 }
-      
-      
+
+
+
+
+
+
+
+
+  
       
 	  

@@ -9,7 +9,7 @@ LDLIBS= `pkg-config --libs sdl` -lSDL_image
 
 all: main
 
-main: basics/pixel_operations.o  basics/sdl_basics.o filter.o segmentation.o
+main: basics/pixel_operations.o  basics/sdl_basics.o filter.o segmentation.o extraction.o
 
 
 clean:

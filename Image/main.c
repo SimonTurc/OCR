@@ -16,7 +16,7 @@ int main()
     
     init_sdl();
     
-    image = load_image("test_image/test.jpg");
+    image = load_image("test_image/test6.bmp");
     
     screen_surface = display_image(image);
 
@@ -44,6 +44,8 @@ int main()
     horizontal_segmentation(image);
     
     update_surface(screen_surface, image);
+
+    
     
     wait_for_keypressed();
 
@@ -53,6 +55,14 @@ int main()
     
 
 
+
+    wait_for_keypressed();
+
+    extraction(image);
+
+    update_surface(screen_surface, image);
+
+    
 
     wait_for_keypressed();
 
