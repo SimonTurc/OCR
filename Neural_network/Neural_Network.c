@@ -13,6 +13,12 @@
 #define NUM_TRAINING_EX 2
 #define EPOCH 1
 
+double randomWeight() // generate random weight between [0.0, 1.0]
+	{
+	    return (rand() / (double) RAND_MAX);
+	}
+#define Slope 1.0
+
 layer *lay = NULL;
 int num_layers;
 int *num_neurons;
@@ -66,7 +72,7 @@ int main(void)
     // Get Output Labels
     //int out[4] = {0,1,1,0};
     get_desired_outputs();
-    //train_neural_net();
+    train_neural_net();
     //serialize();
     //deserialize("bot.txt");
     //test_nn();
@@ -78,7 +84,7 @@ int main(void)
 
     return 0;
 }
-
+ //----------------------------Activation function-----------------------------
 static double sigmoid(double value)
 {
     return 1.0 / (1.0 + exp(-value));
@@ -88,11 +94,28 @@ static double sigmoidDerivative(double nodeOutput)
 {
     return nodeOutput * (1- nodeOutput);
 }
-double randomWeight() // generate random weight between [0.0, 1.0]
+
+double softplus(double v)
 	{
-	    return (rand() / (double) RAND_MAX);
+	return log(1.0 + exp(Slope * v));
 	}
 
+double d_softplus(double v)
+	{
+	return Slope * 1.0 / (1.0 + exp(Slope * -v));
+	}
+
+double x2(double v)
+	{
+	return v * v + v;
+	}
+
+double d_x2(double v)
+	{
+	return 2.0 * v + 1.0;
+	}
+
+//----------------------------Neural Network init---------------------------
 int init()
 {
     if(create_architecture() != SUCCESS_CREATE_ARCHITECTURE)
@@ -103,47 +126,6 @@ int init()
 
     printf("Neural Network Created Successfully...\n\n");
     return SUCCESS_INIT;
-}
-
-//Get Inputs
-void get_inputs(void)
-{
-    int i,j;
-
-        for(i=0;i<NUM_TRAINING_EX;i++)
-        {
-            for(j=0;j<num_neurons[0];j++)
-            {
-                input[i][j] = train_image[i][j];
-                //printf("%1.f ",input[i][j]);
-                //if ((j+1) % 28 == 0) putchar('\n');
-            }
-        }
-}
-
-//Get Labels
-void get_desired_outputs(void)
-{
-    int i;
-    
-    for(i=0;i<NUM_TRAINING_EX;i++)
-    {
-
-        desired_outputs[i] = (float)train_label[i];
-    }
-}
-
-// Feed inputs to input layer
-void feed_input(int i)
-{
-    int j;
-
-    for(j=0;j<num_neurons[0];j++)
-    {
-        lay[0].neu[j].actv = input[i][j];
-    }
-    printf("Input: %d\n", train_label[i]);
-    
 }
 
 // Create Neural Network Architecture
@@ -218,26 +200,17 @@ int initialize_weights(void)
     return SUCCESS_INIT_WEIGHTS;
 }
 
-// Train Neural Network
-void train_neural_net(void)
+// Feed inputs to input layer
+void feed_input(int i)
 {
-    int i;
-    int it=0;
+    int j;
 
-    // Gradient Descent
-    for(it=0;it<EPOCH;it++)
+    for(j=0;j<num_neurons[0];j++)
     {
-        for(i=0;i<NUM_TRAINING_EX;i++)
-        {
-            feed_input(i);
-            forward_prop();
-            calc_error(i);
-            back_prop();
-            //update_weights();
-        }
-        //printf("%i\n",it);
-        printf("\n");
+        lay[0].neu[j].actv = input[i][j];
     }
+    printf("Input: %d\n", train_label[i]);
+    
 }
 
 void forward_prop(void)
@@ -251,24 +224,12 @@ void forward_prop(void)
 
             for(k=0;k< num_neurons[i-1];k++)
             {
-                sum += (lay[i-1].neu[k].out_weights[j] * lay[i-1].neu[k].actv);
+                sum += lay[i-1].neu[k].out_weights[j] * lay[i-1].neu[k].actv;
             }
-            printf("%f \n",sum);
             double output = sigmoid(sum);
-            printf("%f \n",output);
-            // Output Layers
-            if(i == (num_layers-1))
-            {
-                lay[i].neu[j].actv = output;
-                lay[i].neu[j].dbias = sigmoidDerivative(lay[i].neu[j].actv);
-                printf("Output[%i][%i]: %f\n",i,j,lay[i].neu[j].actv);                
-            }
-            // hidden Layer
-            else
-            {
-                lay[i].neu[j].actv = output;
-                lay[i].neu[j].dbias = sigmoidDerivative(output);
-            }
+            lay[i].neu[j].actv = output;
+            lay[i].neu[j].dbias = sigmoidDerivative(lay[i].neu[j].actv);
+            printf("Output[%i][%i]: %f\n",i,j,lay[i].neu[j].actv);                
         }
     }
 }
@@ -340,6 +301,29 @@ void update_weights(void)
     } 
 }
 
+// Train Neural Network
+void train_neural_net(void)
+{
+    int i;
+    int it=0;
+
+    // Gradient Descent
+    for(it=0;it<EPOCH;it++)
+    {
+        for(i=0;i<NUM_TRAINING_EX;i++)
+        {
+            feed_input(i);
+            forward_prop();
+            calc_error(i);
+            back_prop();
+            //update_weights();
+        }
+        //printf("%i\n",it);
+        printf("\n");
+    }
+}
+
+
 // Serialize the network
 void serialize(void)
 {
@@ -395,6 +379,34 @@ void deserialize(char *bot)
     }
     printf("A neural network has been successfully created\n"); 
     fclose(file);
+}
+
+//Get Inputs
+void get_inputs(void)
+{
+    int i,j;
+
+        for(i=0;i<NUM_TRAINING_EX;i++)
+        {
+            for(j=0;j<num_neurons[0];j++)
+            {
+                input[i][j] = train_image[i][j];
+                //printf("%1.f ",input[i][j]);
+                //if ((j+1) % 28 == 0) putchar('\n');
+            }
+        }
+}
+
+//Get Labels
+void get_desired_outputs(void)
+{
+    int i;
+    
+    for(i=0;i<NUM_TRAINING_EX;i++)
+    {
+
+        desired_outputs[i] = (float)train_label[i];
+    }
 }
 
 void Normalize_matrix(int num_train_actual)
