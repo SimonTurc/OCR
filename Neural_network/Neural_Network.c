@@ -11,7 +11,7 @@
 #define NUM_NEURON_3 10
 #define ALPHA 0.15
 #define NUM_TRAINING_EX 2
-#define EPOCH 2
+#define EPOCH 1
 
 layer *lay = NULL;
 int num_layers;
@@ -66,7 +66,7 @@ int main(void)
     // Get Output Labels
     //int out[4] = {0,1,1,0};
     get_desired_outputs();
-    train_neural_net();
+    //train_neural_net();
     //serialize();
     //deserialize("bot.txt");
     //test_nn();
@@ -115,6 +115,8 @@ void get_inputs(void)
             for(j=0;j<num_neurons[0];j++)
             {
                 input[i][j] = train_image[i][j];
+                //printf("%1.f ",input[i][j]);
+                //if ((j+1) % 28 == 0) putchar('\n');
             }
         }
 }
