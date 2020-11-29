@@ -27,7 +27,7 @@ void feed_input(int i);
 void train_neural_net(void);
 void forward_prop(void);
 void compute_cost(int i);
-void back_prop(int p);
+void back_prop(void);
 void update_weights(void);
 void get_inputs(void);
 void get_desired_outputs(void);
@@ -35,6 +35,8 @@ void test_nn(void);
 void serialize(void);
 void deserialize(char *bot);
 void Normalize_matrix(int num_train_actual);
+void calc_error(int i);
+double randomWeight(void);
 
 int initialize_dummy_weights(void);
 
