@@ -1,7 +1,7 @@
 #include "backprop.h"
 #include "layer.h"
-#include "neuron.h"
 #include "mnist.h"
+#include "neuron.h"
 
 #define MAX_LENGHT 20
 #define NUM_LAYERS 3
@@ -12,11 +12,6 @@
 #define ALPHA 0.15
 #define NUM_TRAINING_EX 2
 #define EPOCH 1
-
-double randomWeight() // generate random weight between [0.0, 1.0]
-	{
-	    return (rand() / (double) RAND_MAX);
-	}
 #define Slope 1.0
 
 layer *lay = NULL;
@@ -26,42 +21,42 @@ float *errors;
 float full_cost;
 float **input;
 float *desired_outputs;
-int n=1;
+int n = 1;
 
 int main(void)
 {
     int i;
-    
+
     num_layers = NUM_LAYERS;
 
-    num_neurons = (int*) malloc(num_layers * sizeof(int));
-    memset(num_neurons,0,num_layers *sizeof(int));
-    
-    num_neurons[0] = NUM_NEURON_0 ;
-    num_neurons[1] = NUM_NEURON_1 ;
-    //num_neurons[2] = NUM_NEURON_2 ;
-    num_neurons[2] = NUM_NEURON_3 ;
+    num_neurons = (int *)malloc(num_layers * sizeof(int));
+    memset(num_neurons, 0, num_layers * sizeof(int));
+
+    num_neurons[0] = NUM_NEURON_0;
+    num_neurons[1] = NUM_NEURON_1;
+    // num_neurons[2] = NUM_NEURON_2 ;
+    num_neurons[2] = NUM_NEURON_3;
 
     // Initialize the neural network module
-    if(init()!= SUCCESS_INIT)
+    if (init() != SUCCESS_INIT)
     {
         printf("Error in Initialization...\n");
         exit(0);
     }
 
-    input = (float**) malloc(NUM_TRAINING_EX* sizeof(float*));
-    for(i=0;i<NUM_TRAINING_EX;i++)
+    input = (float **)malloc(NUM_TRAINING_EX * sizeof(float *));
+    for (i = 0; i < NUM_TRAINING_EX; i++)
     {
-        input[i] = (float*)malloc(num_neurons[0] * sizeof(float));
+        input[i] = (float *)malloc(num_neurons[0] * sizeof(float));
     }
 
-    desired_outputs = (float*) malloc(NUM_TRAINING_EX* sizeof(float*));
+    desired_outputs = (float *)malloc(NUM_TRAINING_EX * sizeof(float *));
 
-    errors = (float *) malloc(num_neurons[num_layers-1] * sizeof(float));
-    memset(errors,0,num_neurons[num_layers-1]*sizeof(float));
+    errors = (float *)malloc(num_neurons[num_layers - 1] * sizeof(float));
+    memset(errors, 0, num_neurons[num_layers - 1] * sizeof(float));
 
     // Get Training Examples
-    //int inp[4][2] = {{0,0},{0,1},{1,0},{1,1}};
+    // int inp[4][2] = {{0,0},{0,1},{1,0},{1,1}};
     load_mnist();
     for (size_t i = 0; i < NUM_TRAINING_EX; i++)
     {
@@ -70,21 +65,21 @@ int main(void)
     get_inputs();
 
     // Get Output Labels
-    //int out[4] = {0,1,1,0};
+    // int out[4] = {0,1,1,0};
     get_desired_outputs();
     train_neural_net();
-    //serialize();
-    //deserialize("bot.txt");
-    //test_nn();
+    // serialize();
+    // deserialize("bot.txt");
+    // test_nn();
 
-    if(dinit()!= SUCCESS_DINIT)
+    if (dinit() != SUCCESS_DINIT)
     {
         printf("Error in Dinitialization...\n");
     }
 
     return 0;
 }
- //----------------------------Activation function-----------------------------
+//----------------------------Activation function-----------------------------
 static double sigmoid(double value)
 {
     return 1.0 / (1.0 + exp(-value));
@@ -92,33 +87,45 @@ static double sigmoid(double value)
 
 static double sigmoidDerivative(double nodeOutput)
 {
-    return nodeOutput * (1- nodeOutput);
+    return nodeOutput * (1 - nodeOutput);
 }
 
 double softplus(double v)
-	{
-	return log(1.0 + exp(Slope * v));
-	}
+{
+    return log(1.0 + exp(Slope * v));
+}
 
 double d_softplus(double v)
-	{
-	return Slope * 1.0 / (1.0 + exp(Slope * -v));
-	}
+{
+    return Slope * 1.0 / (1.0 + exp(Slope * -v));
+}
 
 double x2(double v)
-	{
-	return v * v + v;
-	}
+{
+    return v * v + v;
+}
 
 double d_x2(double v)
-	{
-	return 2.0 * v + 1.0;
-	}
+{
+    return 2.0 * v + 1.0;
+}
 
 //----------------------------Neural Network init---------------------------
+double NormalDistribution()
+{
+    double a = (rand() / (double)RAND_MAX);
+    double b = (rand() / (double)RAND_MAX);
+    return sqrt(-2 * log(a)) * cos(2 * 3.14 * b);
+}
+
+double randomWeight() // generate random weight between [0.0, 1.0]
+{
+    return NormalDistribution();
+}
+
 int init()
 {
-    if(create_architecture() != SUCCESS_CREATE_ARCHITECTURE)
+    if (create_architecture() != SUCCESS_CREATE_ARCHITECTURE)
     {
         printf("Error in creating architecture...\n");
         return ERR_INIT;
@@ -131,17 +138,16 @@ int init()
 // Create Neural Network Architecture
 int create_architecture()
 {
-    int i=0,j=0;
-    lay = (layer*) malloc(num_layers * sizeof(layer));
+    lay = (layer *)malloc(num_layers * sizeof(layer));
 
-    for(i=0;i<num_layers;i++)
+    for (int i = 0; i < num_layers; i++)
     {
-        lay[i] = create_layer(num_neurons[i]);      
+        lay[i] = create_layer(num_neurons[i]);
         lay[i].num_neu = num_neurons[i];
-        printf("Created Layer: %d\n", i+1);
-        printf("Number of Neurons in Layer %d: %d\n", i,lay[i].num_neu);
+        printf("Created Layer: %d\n", i + 1);
+        printf("Number of Neurons in Layer %d: %d\n", i, lay[i].num_neu);
 
-        for(j=0;j<num_neurons[i];j++)
+        for (int j = 0; j < num_neurons[i]; j++)
         {
             lay[i].neu[j] = create_neuron(num_neurons[i]);
         }
@@ -151,7 +157,7 @@ int create_architecture()
     printf("\n");
 
     // Initialize the weights
-    if(initialize_weights() != SUCCESS_INIT_WEIGHTS)
+    if (initialize_weights() != SUCCESS_INIT_WEIGHTS)
     {
         printf("Error Initilizing weights...\n");
         return ERR_CREATE_ARCHITECTURE;
@@ -162,9 +168,7 @@ int create_architecture()
 
 int initialize_weights(void)
 {
-    int i,j,k;
-
-    if(lay == NULL)
+    if (lay == NULL)
     {
         printf("No layers in Neural Network...\n");
         return ERR_INIT_WEIGHTS;
@@ -172,30 +176,32 @@ int initialize_weights(void)
 
     printf("Initializing weights...\n");
 
-    for(i=0;i<num_layers-1;i++)
+    for (int i = 0; i < num_layers - 1; i++)
     {
-        for(j=0;j<num_neurons[i];j++)
+        for (int j = 0; j < num_neurons[i]; j++)
         {
-            for(k=0;k< num_neurons[i+1];k++)
+            for (int k = 0; k < num_neurons[i + 1]; k++)
             {
                 // Initialize Output Weights for each neuron
                 lay[i].neu[j].out_weights[k] = randomWeight();
-                printf("weight[%i][%i][%i] : %f\n" ,i,j,k,lay[i].neu[j].out_weights[k]);
+                printf("weight[%i][%i][%i] : %f\n", i, j, k,
+                       lay[i].neu[j].out_weights[k]);
             }
 
-            if(i>0) 
+            if (i > 0)
             {
                 lay[i].neu[j].bias = randomWeight();
-                printf("bias[%i][%i] : %f \n" ,i,j,lay[i].neu[j].bias);
+                printf("bias[%i][%i] : %f \n", i, j, lay[i].neu[j].bias);
             }
         }
     }
-    for (i = 0; i < num_neurons[num_layers-1]; i++)
+    for (int i = 0; i < num_neurons[num_layers - 1]; i++)
     {
-        lay[num_layers-1].neu[i].bias = randomWeight();
-        printf("bias[%i][%i] : %f \n" ,num_layers-1,i,lay[num_layers-1].neu[i].bias);
+        lay[num_layers - 1].neu[i].bias = randomWeight();
+        printf("bias[%i][%i] : %f \n", num_layers - 1, i,
+               lay[num_layers - 1].neu[i].bias);
     }
-       
+
     printf("\n");
     return SUCCESS_INIT_WEIGHTS;
 }
@@ -203,33 +209,30 @@ int initialize_weights(void)
 // Feed inputs to input layer
 void feed_input(int i)
 {
-    int j;
-
-    for(j=0;j<num_neurons[0];j++)
+    for (int j = 0; j < num_neurons[0]; j++)
     {
         lay[0].neu[j].actv = input[i][j];
     }
     printf("Input: %d\n", train_label[i]);
-    
 }
 
 void forward_prop(void)
 {
-    int i,j,k;
-    for(i=1;i<num_layers;i++)
-    {   
-        for(j=0;j<num_neurons[i];j++)
+    for (int i = 1; i < num_layers; i++)
+    {
+        for (int j = 0; j < num_neurons[i]; j++)
         {
-            double sum = lay[i].neu[j].bias;
+            double sum = lay[i].neu[j].bias; // adding bias of the neuron
 
-            for(k=0;k< num_neurons[i-1];k++)
+            for (int k = 0; k < num_neurons[i - 1]; k++)
             {
-                sum += lay[i-1].neu[k].out_weights[j] * lay[i-1].neu[k].actv;
+                sum +=
+                    lay[i - 1].neu[k].out_weights[j] * lay[i - 1].neu[k].actv;
             }
             double output = sigmoid(sum);
             lay[i].neu[j].actv = output;
-            lay[i].neu[j].dbias = sigmoidDerivative(lay[i].neu[j].actv);
-            printf("Output[%i][%i]: %f\n",i,j,lay[i].neu[j].actv);                
+            lay[i].neu[j].grad = sigmoidDerivative(lay[i].neu[j].actv);
+            printf("Output[%i][%i]: %f\n", i, j, lay[i].neu[j].actv);
         }
     }
 }
@@ -237,181 +240,205 @@ void forward_prop(void)
 // Back Propogate Error
 void back_prop(void)
 {
-    int i,j,k;
     // Output Layer
-    for(j=0;j<num_neurons[num_layers-1];j++)
-    {     
-        lay[num_layers-1].neu[j].bias += (ALPHA*errors[j]* lay[num_layers-1].neu[j].dbias);
-        for (k = 0; k < num_neurons[num_layers -2]; k++)
-        {
-            lay[num_layers-2].neu[k].out_weights[j] += lay[num_layers-2].neu[k].actv * ALPHA * errors[j];
-        }
-        
-    }
-
-    // Hidden Layers
-    for(i=num_layers-2;i>0;i--)
+    for (int j = 0; j < num_neurons[num_layers - 1]; j++)
     {
-        double deltaHidden[num_neurons[i]];
-        for(j=0;j<num_neurons[i];j++)
+        lay[num_layers - 1].neu[j].bias -= ALPHA * errors[j];
+        for (int k = 0; k < num_neurons[num_layers - 2]; k++)
         {
-            double hiddenError = 0.0 ;
-            for(k=0;k<num_neurons[i+1];k++)
+            lay[num_layers - 2].neu[k].out_weights[j] -=
+                ALPHA * errors[j] * lay[num_layers - 2].neu[k].actv;
+        }
+    }
+    // Hidden Layers
+    double **hidden_error_matrix = (double **)malloc(
+        (num_layers - 1) * sizeof(double)); // matrix for back propagate error
+    hidden_error_matrix[num_layers - 1] =
+        (double *)malloc(num_neurons[num_layers - 1] * sizeof(double));
+    for (int j = 0; j < num_neurons[num_layers - 1]; j++)
+    {
+        hidden_error_matrix[num_layers - 1][j] =
+            errors[j]; // intializing with the output error
+    }
+    for (int i = num_layers - 2; i >= 0; i--)
+    {
+        hidden_error_matrix[i] = (double *)malloc(
+            num_neurons[i] * sizeof(double)); // vector of error of layer i
+        for (int j = 0; j < num_neurons[i]; j++)
+        {
+            hidden_error_matrix[i][j] = 0;
+            for (int k = 0; k < num_neurons[i + 1]; k++)
             {
-                hiddenError += errors[k]*lay[i].neu[j].out_weights[k];
+                hidden_error_matrix[i][j] += hidden_error_matrix[i + 1][k] *
+                                             lay[i].neu[j].out_weights[k];
             }
-            deltaHidden[j] = hiddenError * lay[i].neu[j].dbias;
-            lay[i].neu[j].bias *= (ALPHA*deltaHidden[j]);
-            if (i<num_layers-2)
+            lay[i].neu[j].bias -= (ALPHA * hidden_error_matrix[i][j]);
+            if (i < num_layers - 2)
             {
-                for(k=0;k<num_neurons[i+1];k++)
+                for (int k = 0; k < num_neurons[i + 1]; k++)
                 {
-                    lay[i].neu[j].out_weights[k] += lay[i].neu[j].actv * ALPHA * deltaHidden[j];
+                    lay[i].neu[j].out_weights[k] -=
+                        lay[i].neu[j].actv * ALPHA * hidden_error_matrix[i][j];
                 }
             }
         }
     }
+    for (int i = 0; i < num_layers - 1; i++)
+    {
+        free(hidden_error_matrix[i]);
+    }
+    free(hidden_error_matrix);
 }
 
 // Calculate error between output of forward-prop and the desired_output
 void calc_error(int i)
 {
-    for (size_t j = 0; j < num_neurons[num_layers-1]; j++)
+    double *output_vector =
+        (double *)malloc((num_neurons[num_layers - 1]) * sizeof(double));
+    memset(output_vector, 0, num_neurons[num_layers - 1] * sizeof(double));
+    output_vector[(int)desired_outputs[i]] = 1;
+
+    for (size_t j = 0; j < num_neurons[num_layers - 1]; j++)
     {
-        errors[j] = (desired_outputs[i] - lay[num_layers-1].neu[j].actv);
+        errors[j] = fabs((lay[num_layers - 1].neu[j].actv - output_vector[j]) *
+                         lay[num_layers - 1].neu[j].grad);
+        printf("error : %f \n", errors[j]);
     }
+
+    free(output_vector);
 }
 
 void update_weights(void)
 {
-    int i,j,k;
+    int i, j, k;
 
-    for(i=1;i<num_layers-1;i++)
+    for (i = 1; i < num_layers - 1; i++)
     {
-        for(j=0;j<num_neurons[i];j++)
+        for (j = 0; j < num_neurons[i]; j++)
         {
-            for(k=0;k<num_neurons[i-1];k++)
+            for (k = 0; k < num_neurons[i - 1]; k++)
             {
                 // Update Weights
-                lay[i].neu[j].out_weights[k] += ALPHA * lay[i].neu[j].dbias * lay[i-1].neu[j].out_weights[k];
+                lay[i].neu[j].out_weights[k] +=
+                    ALPHA * lay[i].neu[j].grad *
+                    lay[i - 1].neu[j].out_weights[k];
             }
             // Update Bias
-            lay[i].neu[j].bias += (ALPHA * lay[i].neu[j].dbias);
+            lay[i].neu[j].bias += (ALPHA * lay[i].neu[j].grad);
         }
-    } 
+    }
 }
 
 // Train Neural Network
 void train_neural_net(void)
 {
     int i;
-    int it=0;
+    int it = 0;
 
     // Gradient Descent
-    for(it=0;it<EPOCH;it++)
+    for (it = 0; it < EPOCH; it++)
     {
-        for(i=0;i<NUM_TRAINING_EX;i++)
+        for (i = 0; i < NUM_TRAINING_EX; i++)
         {
             feed_input(i);
             forward_prop();
             calc_error(i);
             back_prop();
-            //update_weights();
+            // update_weights();
         }
-        //printf("%i\n",it);
+        // printf("%i\n",it);
         printf("\n");
     }
 }
 
-
 // Serialize the network
 void serialize(void)
 {
-    FILE *file = fopen("bot.txt","w+");
-    fprintf(file,"%d\n",num_layers);
-    for (size_t i = 0; i < num_layers ; i++)
+    FILE *file = fopen("bot.txt", "w+");
+    fprintf(file, "%d\n", num_layers);
+    for (size_t i = 0; i < num_layers; i++)
     {
-        fprintf(file,"%d\n",num_neurons[i]);
+        fprintf(file, "%d\n", num_neurons[i]);
     }
-    for (size_t i = 0; i < num_layers ; i++)
+    for (size_t i = 0; i < num_layers; i++)
     {
-        for(size_t j=0;j<num_neurons[i];j++)
+        for (size_t j = 0; j < num_neurons[i]; j++)
         {
-            fprintf(file,"%f\n",lay[i].neu[j].bias);
-            for(size_t k = 0; k <num_neurons[i+1];k++)
+            fprintf(file, "%f\n", lay[i].neu[j].bias);
+            for (size_t k = 0; k < num_neurons[i + 1]; k++)
             {
-                fprintf(file,"%f\n",lay[i].neu[j].out_weights[k]);
+                fprintf(file, "%f\n", lay[i].neu[j].out_weights[k]);
             }
         }
     }
-    printf("A bot.txt has been created\n");  
+    printf("A bot.txt has been created\n");
     fclose(file);
 }
 
 // Deserialize a bot.txt
 void deserialize(char *bot)
 {
-    FILE *file = fopen(bot,"r");
-    char str[MAX_LENGHT] = ""; 
-    fgets(str,MAX_LENGHT, file);
+    FILE *file = fopen(bot, "r");
+    char str[MAX_LENGHT] = "";
+    fgets(str, MAX_LENGHT, file);
     num_layers = atoi(str);
-    num_neurons = (int*) malloc(num_layers * sizeof(int));
+    num_neurons = (int *)malloc(num_layers * sizeof(int));
     for (size_t i = 0; i < num_layers; i++)
     {
-        fgets(str,MAX_LENGHT, file);
+        fgets(str, MAX_LENGHT, file);
         num_neurons[i] = atoi(str);
-        printf("%d \n",num_neurons[i]);
+        printf("%d \n", num_neurons[i]);
     }
     init();
     for (size_t i = 0; i < num_layers; i++)
     {
-        for (size_t j= 0; j < num_neurons[i]; j++)
+        for (size_t j = 0; j < num_neurons[i]; j++)
         {
-            fgets(str,MAX_LENGHT, file);
+            fgets(str, MAX_LENGHT, file);
             lay[i].neu[j].bias = atof(str);
-            for(size_t k = 0; k < num_neurons[i+1]; k++)
+            for (size_t k = 0; k < num_neurons[i + 1]; k++)
             {
-                fgets(str,MAX_LENGHT, file);
+                fgets(str, MAX_LENGHT, file);
                 lay[i].neu[j].out_weights[k] = atof(str);
-                printf("%ld:w[%ld][%ld]: %f\n",k,i,j, lay[i].neu[j].out_weights[k]);
+                printf("%ld:w[%ld][%ld]: %f\n", k, i, j,
+                       lay[i].neu[j].out_weights[k]);
             }
         }
     }
-    printf("A neural network has been successfully created\n"); 
+    printf("A neural network has been successfully created\n");
     fclose(file);
 }
 
-//Get Inputs
+// Get Inputs
 void get_inputs(void)
 {
-    int i,j;
+    int i, j;
 
-        for(i=0;i<NUM_TRAINING_EX;i++)
+    for (i = 0; i < NUM_TRAINING_EX; i++)
+    {
+        for (j = 0; j < num_neurons[0]; j++)
         {
-            for(j=0;j<num_neurons[0];j++)
-            {
-                input[i][j] = train_image[i][j];
-                //printf("%1.f ",input[i][j]);
-                //if ((j+1) % 28 == 0) putchar('\n');
-            }
+            input[i][j] = train_image[i][j];
+            // printf("%1.f ",input[i][j]);
+            // if ((j+1) % 28 == 0) putchar('\n');
         }
+    }
 }
 
-//Get Labels
+// Get Labels
 void get_desired_outputs(void)
 {
     int i;
-    
-    for(i=0;i<NUM_TRAINING_EX;i++)
-    {
 
+    for (i = 0; i < NUM_TRAINING_EX; i++)
+    {
         desired_outputs[i] = (float)train_label[i];
     }
 }
 
 void Normalize_matrix(int num_train_actual)
 {
-    for (int i=0; i<784; i++) 
+    for (int i = 0; i < 784; i++)
     {
         if (train_image[num_train_actual][i] > 0.0)
         {
@@ -421,17 +448,17 @@ void Normalize_matrix(int num_train_actual)
 }
 
 // Test the trained network
-void test_nn(void) 
+void test_nn(void)
 {
     int i;
     int j = 0;
-    while(j <5)
+    while (j < 5)
     {
-        for(i=0;i<num_neurons[0];i++)
+        for (i = 0; i < num_neurons[0]; i++)
         {
             lay[0].neu[i].actv = train_image[j][i];
         }
-        printf("Input: %i\n",train_label[j]);
+        printf("Input: %i\n", train_label[j]);
         forward_prop();
         j++;
     }
@@ -443,6 +470,6 @@ int dinit(void)
     free(desired_outputs);
     free(num_neurons);
     free(lay);
-    
+
     return SUCCESS_DINIT;
 }

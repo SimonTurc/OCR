@@ -11,12 +11,7 @@ typedef struct neuron_t
 	double actv;
 	double *out_weights;
 	double bias;
-	double z;
-
-	double dactv;
-	double *dw;
-	double dbias;
-	double dz;
+	double grad;
 
 } neuron;
 
