@@ -1,7 +1,6 @@
 #include <err.h>
 #include "basics/pixel_operations.h"
 #include "basics/sdl_basics.h"
-#include <math.h>
 
 /*
  * Classic Thresholding (Otsu Methode)
@@ -14,7 +13,7 @@ unsigned int Otsu_Method(SDL_Surface* image){
     
     int *histo = calloc(256, sizeof(int));
     if (histo == NULL)
-	errx(1, "Not enough memory!");
+	errx(1, "Otsu_Method : not enough memory for the histogram.");
     
     int number_of_pixels = 0;
 
