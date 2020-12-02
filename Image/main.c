@@ -51,6 +51,7 @@ int main()
 	//SDL_SaveBMP(line,"lines/line.bmp");
    
 	char_per_line = count_char(line);
+	printf("In line %i there are %i characters\n",i,char_per_line);
 	for(int j = 0; j <= char_per_line; j++)
 	{
 	    extraction(line, j);
