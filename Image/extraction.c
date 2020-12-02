@@ -147,6 +147,8 @@ void extraction(SDL_Surface* image, int char_nb)
 	}
       printf("\n");
     }
+  free(m);
+  free(m1);
 }
   
 

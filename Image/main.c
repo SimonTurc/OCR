@@ -15,7 +15,7 @@ int main()
 {
     SDL_Surface* image;
 
-    image = load_image("test_image/test.jpg");
+    image = load_image("test_image/test_r.bmp");
     
     init_sdl();
 
