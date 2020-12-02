@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Generated with glade 3.38.1 -->
+<interface>
+  <requires lib="gtk+" version="3.24"/>
+  <object class="GtkWindow" id="window">
+    <property name="can-focus">False</property>
+    <child>
+      <object class="GtkFixed" id="fixed">
+        <property name="visible">True</property>
+        <property name="can-focus">False</property>
+        <child>
+          <object class="GtkButton" id="import_button">
+            <property name="label" translatable="yes">Import Image</property>
+            <property name="height-request">49</property>
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+            <property name="tooltip-text" translatable="yes">Choose the image to import</property>
+            <property name="border-width">10</property>
+            <signal name="clicked" handler="on_import_button_clicked" swapped="no"/>
+          </object>
+        </child>
+        <child>
+          <object class="GtkButton" id="run_button">
+            <property name="label" translatable="yes">READ !</property>
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+            <property name="tooltip-text" translatable="yes">Choose the image to import</property>
+            <property name="border-width">10</property>
+            <signal name="clicked" handler="on_run_button_clicked" swapped="no"/>
+          </object>
+          <packing>
+            <property name="x">300</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="output_text">
+            <property name="width-request">100</property>
+            <property name="height-request">80</property>
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="has-focus">True</property>
+            <property name="is-focus">True</property>
+            <property name="label" translatable="yes">connard</property>
+            <property name="selectable">True</property>
+          </object>
+          <packing>
+            <property name="x">199</property>
+            <property name="y">144</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>
