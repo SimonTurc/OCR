@@ -95,7 +95,7 @@ void binarization(SDL_Surface* image,unsigned int otsu_value){
 
 	    if (average <= otsu_value)
 	    {
-		pixel = SDL_MapRGB(image->format, 0, 0, 0);
+		pixel = SDL_MapRGB(image->format, 1, 1, 1);
 		put_pixel(image, i, j, pixel);
 	    }
 	    else
