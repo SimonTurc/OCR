@@ -33,7 +33,7 @@ int main()
     horizontal_histogram(image);
 
     int nb_lines = number_of_lines(image);
-
+    int char_per_line = 0;
     for(int i = 1; i <= nb_lines; i++)
     {
 	SDL_Surface* line = cut_image(image,i);
@@ -43,7 +43,8 @@ int main()
 	SDL_SaveBMP(line,"lines/line.bmp");
 	if(i == nb_lines)
 	  {
-	    for(int j = 0; j < 15; j++)
+	    char_per_line = count_char(line);
+	    for(int j = 0; j <= char_per_line; j++)
 	      {
 		extraction(line, j);
 	      }
