@@ -4,6 +4,7 @@
 #include "basics/sdl_basics.h"
 #include "filter.h"
 #include "segmentation.h"
+#include "extraction.h"
 
 
 
@@ -32,14 +33,20 @@ int main()
 
     int nb_lines = number_of_lines(image);
 
-    for(int i = 1; i < nb_lines; i++)
+    for(int i = 1; i <= nb_lines; i++)
     {
 	SDL_Surface* line = cut_image(image,i);
 	
 	vertical_histogram(line);
 
-	//SDL_SaveBMP(line,"lines/line.bmp");
-
+	SDL_SaveBMP(line,"lines/line.bmp");
+	if(i == nb_lines)
+	  {
+	    for(int j = 0; j < 15; j++)
+	      {
+		extraction(line, j);
+	      }
+	  }
 	SDL_FreeSurface(line);
     }
 

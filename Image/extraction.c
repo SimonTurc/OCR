@@ -4,159 +4,112 @@
 #include "basics/pixel_operations.h"
 
 
-int get_length_col(SDL_Surface* image,int row,int col,int width, int height)
+int matrix_col_extract(SDL_Surface* image, int char_nb)
 {
-
-  int current_pos_row = row;
-  int current_pos_col = col;
-  int x = 0;
-  //printf("%i\n", height);
-  //printf("%i\n", width);
+  int width = image -> w;
+  int col_to_return = 0;
+  int isWhite = 0;
+  int col = 0;
+  int current_char= 0;
 
   
-  //Get the width of the char
-  while(current_pos_col < width)
+  while (current_char < char_nb && col < width)
     {
-      Uint32 pixel = get_pixel(image,current_pos_col,current_pos_row);
+      Uint32 pixel = get_pixel(image, col, 0);
       Uint8 r, g, b;
       SDL_GetRGB(pixel, image->format, &r, &g, &b);
-      if (r == 127)//if the current pixel is red, it means that we are at the end of the char area
+      if((g == 255 || g == 0) && isWhite == 0)//Si le pixel est noir ou blanc
 	{
-	  pixel = SDL_MapRGB(image->format , 0 , 200 , 0);
-	  put_pixel(image, current_pos_col-1, current_pos_row, pixel);
-	  x = current_pos_col - col-1;//Give to *x the value of the width
-	  printf("Col: Col %i, Col_pos: %i, Diff %i\n", col, current_pos_col, current_pos_col-col);
-	  current_pos_col = height;// = width a modif
+	  isWhite = 1;//On est dans un char donc isWhite passe a 1
+	  current_char += 1;//Le n-ieme char de la ligne
+	  col_to_return = col;
+	}
+	  
+      if(isWhite == 1)
+	{
+	  if(g == 127)
+	    {
+	      isWhite = 0;
+	    }
+	}
+      col++;
+    }
+  return col_to_return;
+}
+
+
+
+int get_length_col(SDL_Surface* image,int width,int col)
+{
+  int x = 0;
+  int start_col = col; 
+  
+  //Get the width of the char
+  while(col < width)
+    {
+      Uint32 pixel = get_pixel(image,col,16);
+      Uint8 r, g, b;
+      SDL_GetRGB(pixel, image->format, &r, &g, &b);
+      if (g == 127)//if the current pixel is red, it means that we are at the end of the char area
+	{
+	  
+	  x = col - start_col;//Give to x the value of the width
+	  //col = width;
 	  return x;
 	}
-      
-      current_pos_col++;
+      col++;
     }
-    printf("Col: %i, %i, %i\n", col, current_pos_col, current_pos_col-col);
     return x;
 }
   
-  //Get the height of my char
 
-int get_length_row(SDL_Surface* image,int row,int col,int width, int height)
+double* fill_matrix(SDL_Surface* image, int start_col, int end_col, double* m)
 {
-  int current_pos_row = row;
-  //int current_pos_col = col;
+  int height = image -> h;
   
-  int y = 0;
-  printf("%i\n", height);
-  printf("%i\n", width);
-  
-  while(current_pos_row < height)
+  for(int i = 0; i < height; i++)
     {
-      Uint32 pixel = get_pixel(image,col,current_pos_row);
-      Uint8 r, g, b;
-      SDL_GetRGB(pixel, image->format, &r, &g, &b);
-      if (r == 127)//if the current pixel is red, it means that we are at the end of the char area
+      for(int j = start_col; j < end_col; j++)
 	{
-	  pixel = SDL_MapRGB(image->format , 0 , 0 , 200);
-	  put_pixel(image, col, current_pos_row-1, pixel);
-	  y = current_pos_row - row;//Give to *y the value of the height
-	  printf("Row: Row %i, Row_pos: %i, Diff %i\n", row, current_pos_row, current_pos_row-row);
-	  current_pos_row = height;
-	  return y;
+	  Uint32 pixel = get_pixel(image,j,i);
+	  Uint8 r, g, b;
+	  SDL_GetRGB(pixel, image->format, &r, &g, &b);
+	  if(r < 1)
+	    {
+	      m[(j-start_col)+i*(end_col-start_col)] = 1.0;
+	    }  
 	}
-
-      current_pos_row++;
     }
-     //printf("Row: %i, %i, %i\n", row, current_pos_row, current_pos_row-row);
-     return y;
+  return m;
 }
 
 
 
-/*void init_matrix()
-{
-  m = malloc(sizeof(int)* (*x) * (*y));
-}*/
-
-void fill_matrix(SDL_Surface* image, int start_row, int start_column, int *x, int *y)
-{
-   int row = start_row;
-   int column = start_column;
-   
-   while(row < *x)//Start in the top left of the char area and stop at the bottom left
-     {
-       while(column < *y)//Start in the top left of the char area and stop at the top right
-	 {
-	   Uint32 pixel = get_pixel(image, row, column);
-	   Uint8 r, g, b;
-	   SDL_GetRGB(pixel, image->format, &r, &g, &b);
-	   if(r == 0)
-	     {
-	       //*m[row * (*y) + column] = 1;
-	       pixel = SDL_MapRGB(image->format , 0 , 0 , 200);
-	       put_pixel(image, row, column, pixel);
-	     }
-	   else
-	     {
-	       //*m[row * (*y) + column] = 0;
-	       pixel = SDL_MapRGB(image->format , 0 , 0 , 200);
-	       put_pixel(image, row, column, pixel);
-	     }
-	   column++;
-	 }
-       row++;
-       column = start_column;
-     }
-  
-}
-
-
-
-
-
-void extraction(SDL_Surface* image)
+void extraction(SDL_Surface* image, int char_nb)
 {
   int width = image -> w;
   int height = image -> h;
-
-  int row = 0;
-  int column = 0;
-  //int *m;//Probably need to create pointers for each call 
-  //So maybe it need to be move in the while
-  //int *y;
-  int x = 0;
-  int y = 0;
+  int start = matrix_col_extract(image,char_nb);
+  int x = get_length_col(image, width, start);//First we get the length
   
-    
-    while (row < height/6)
+  double* m = (double*) malloc(sizeof(double)* height * x);
+  memset(m, 0, height * x * sizeof(double));
+  m = fill_matrix(image, start, start+x, m);//And then we fill the matrix with 0 - 1
+  printf("Height: %i\n", height);
+  printf("Width: %i\n", x);
+  for(int i = 0; i < height; i++)
     {
-      printf("%i\n",height);
-      printf("%i\n",width);
-	while(column < width)
-	  {
-	    Uint32 pixel = get_pixel(image, column, row);
-	    Uint8 r, g, b;
-	    SDL_GetRGB(pixel, image->format, &r, &g, &b);
-	    
-	    if(r != 127)//Go through the image and when we find a character 
-	      {
-		printf("%i\n",column);
-		 x = get_length_col(image,row, column, width, height);//First we get the length
-		 y = get_length_row(image,row, column, width, height);
-		//init_matrix();//Then we create a matrix with good dimensions
-		//fill_matrix(image, row, column, x, y);//And then we fill the matrix with 0 - 1
-		column += x;
-		//pixel = SDL_MapRGB(image->format , 0 , 0 , 200);
-	        //put_pixel(image, column, row, pixel);
-	      }
-	    column++;
-	    //printf("%ui\n",column);
-	  }
-	row+= y;
-	row ++;
-	//printf("Row: %ui\n",row);//On saute à la prochaine ligne rouge
-	column = 0;//Et on se replace au bord gauche de la page
+      for(int j = 0; j < x; j++)
+	{
+	  printf("%1.f ", m[i*(x)+j]); 
+	  if ((j + 1) % x == 0) putchar('\n');
 	}
-    //printf("%ui", *x);
-    //printf("%ui", *y);
+    }
 }
+  
+
+
+		       
 
 
 
