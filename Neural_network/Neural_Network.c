@@ -151,7 +151,10 @@ int create_architecture()
 
         for (int j = 0; j < num_neurons[i]; j++)
         {
-            lay[i].neu[j] = create_neuron(num_neurons[i]);
+            if (i < num_layers - 1)
+            {
+                lay[i].neu[j] = create_neuron(num_neurons[i + 1]);
+            }
         }
         printf("\n");
     }
@@ -186,7 +189,7 @@ int initialize_weights(void)
             {
                 // Initialize Output Weights for each neuron
                 lay[i].neu[j].out_weights[k] = randomWeight();
-                // printf("weight[%i][%i][%i] : %f\n", i, j, k, lay[i].neu[j].out_weights[k]);
+                printf("weight[%i][%i][%i] : %f\n", i, j, k, lay[i].neu[j].out_weights[k]);
             }
 
             if (i > 0)
@@ -490,15 +493,15 @@ int dinit(void)
     }
     free(input);
     free(desired_outputs);
-    for (size_t j = num_layers - 2; j >= 0; j--)
+    for (size_t j = 0; num_layers; j++)
     {
         for (size_t k = 0; k < num_neurons[j + 1]; k++)
         {
             printf("%li \n", k);
-            // free(lay[j].neu[k].out_weights);
+            free(lay[j].neu[k].out_weights);
         }
         printf("%li \n", j);
-        // free(lay[j].neu);
+        free(lay[j].neu);
     }
     free(lay);
     free(num_neurons);
