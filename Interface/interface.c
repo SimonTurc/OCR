@@ -17,7 +17,10 @@ GtkWidget *image1;
 GtkWidget *input_file;
 GtkBuilder *builder;
 
+int is_image_loaded = 0;
+
 void on_input_file_file_set(GtkFileChooserButton *f){
+  gtk_label_set_text (GTK_LABEL(output_text), (const gchar*) "");
   char *filename = (char*) gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(f));
   int x = 70, y = 5;
   if (image1){
@@ -27,15 +30,17 @@ void on_input_file_file_set(GtkFileChooserButton *f){
   gtk_widget_show(image1);
   gtk_container_add(GTK_CONTAINER(fixed), image1);
   gtk_fixed_move(GTK_FIXED(fixed), image1, y, x);
+  is_image_loaded = 1;
 }
 
 void on_run_button_clicked(GtkButton *b){
-  if(image1){
+  if(image1 && is_image_loaded){
     gtk_container_remove(GTK_CONTAINER(fixed), image1);
     char text[] = "Là c'est censé afficher le texte mais on a pas fini le programme zebi";
     gtk_label_set_text (GTK_LABEL(output_text), (const gchar*) text);
+    is_image_loaded = 0;
   }
-  else{
+  if(!image1){
     gtk_label_set_text (GTK_LABEL(output_text), (const gchar*) "Choose an image");
   }
 }
