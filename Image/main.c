@@ -15,7 +15,7 @@ int main()
 {
     SDL_Surface* image;
 
-    image = load_image("test_image/test_r.bmp");
+    image = load_image("test_image/test.bmp");
     
     init_sdl();
 
@@ -25,7 +25,7 @@ int main()
                                0.125, 0.25, 0.125,
 			       0.0625, 0.125, 0.0625};
     
-    applying_filter(image, gaussian_kernel);
+    applying_filter(image, gaussian_kernel);*/
     
     unsigned int otsu_value = Otsu_Method(image);
     binarization(image, otsu_value);
@@ -47,15 +47,15 @@ int main()
 	SDL_Surface* line = cut_image(image_rotate,i);
 	
 	vertical_histogram(line);
-
-	//SDL_SaveBMP(line,"lines/line.bmp");
    
 	char_per_line = count_char(line);
 	printf("In line %i there are %i characters\n",i,char_per_line);
-	for(int j = 0; j <= char_per_line; j++)
-	{
+        
+	for(int j = 1; j <= char_per_line; j++)
+	  {
 	    extraction(line, j);
-	}
+	  }
+	 
 	  
 	SDL_FreeSurface(line);
     }

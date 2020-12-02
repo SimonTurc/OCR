@@ -83,7 +83,7 @@ int get_length_col(SDL_Surface* image,int width,int col)
   //Get the width of the char
   while(col < width)
     {
-      Uint32 pixel = get_pixel(image,col,16);
+      Uint32 pixel = get_pixel(image,col,0);
       Uint8 r, g, b;
       SDL_GetRGB(pixel, image->format, &r, &g, &b);
       if (g == 127)//if the current pixel is red, it means that we are at the end of the char area
