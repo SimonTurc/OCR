@@ -5,6 +5,41 @@
 #include "matrix_resize.h"
 
 
+int count_char(SDL_Surface* image)
+{
+  int width = image -> w;
+  int isWhite = 0;
+  int col = 0;
+  int nb_char = 0;
+
+  
+  while (col < width)
+    {
+      Uint32 pixel = get_pixel(image, col, 0);
+      Uint8 r, g, b;
+      SDL_GetRGB(pixel, image->format, &r, &g, &b);
+      if((g == 255 || g == 1) && isWhite == 0)//Si le pixel est noir ou blanc
+	{
+	  isWhite = 1;//On est dans un char donc isWhite passe a 1
+	  nb_char += 1;
+	}
+	  
+      if(isWhite == 1)
+	{
+	  if(g == 127)
+	    {
+	      isWhite = 0;
+	    }
+	}
+      col++;
+    }
+  return nb_char;
+}
+
+
+
+
+
 int matrix_col_extract(SDL_Surface* image, int char_nb)
 {
   int width = image -> w;
@@ -19,7 +54,7 @@ int matrix_col_extract(SDL_Surface* image, int char_nb)
       Uint32 pixel = get_pixel(image, col, 0);
       Uint8 r, g, b;
       SDL_GetRGB(pixel, image->format, &r, &g, &b);
-      if((g == 255 || g == 0) && isWhite == 0)//Si le pixel est noir ou blanc
+      if((g == 255 || g == 1) && isWhite == 0)//Si le pixel est noir ou blanc
 	{
 	  isWhite = 1;//On est dans un char donc isWhite passe a 1
 	  current_char += 1;//Le n-ieme char de la ligne
@@ -75,7 +110,7 @@ double* fill_matrix(SDL_Surface* image, int start_col, int end_col, double* m)
 	  Uint32 pixel = get_pixel(image,j,i);
 	  Uint8 r, g, b;
 	  SDL_GetRGB(pixel, image->format, &r, &g, &b);
-	  if(r < 1)
+	  if(r == 1)
 	    {
 	      m[(j-start_col)+i*(end_col-start_col)] = 1.0;
 	    }  
