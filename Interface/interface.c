@@ -1,3 +1,6 @@
+#include <stdlib.h>
+#include <sys/types.h>
+#include <signal.h>
 #include <unistd.h>
 #include <string.h>
 #include <gtk/gtk.h>
@@ -10,20 +13,34 @@ GtkWidget *fixed;
 GtkWidget *import_button;
 GtkWidget *run_button;
 GtkWidget *output_text;
+GtkWidget *image1;
+GtkWidget *input_file;
 GtkBuilder *builder;
 
-void on_import_button_clicked(GtkButton *b){
-  printf("la grosse moula");
-  gtk_label_set_text(GTK_LABEL(output_text), (const gchar* ) "Shifter Pro");
+void on_input_file_file_set(GtkFileChooserButton *f){
+  char *filename = (char*) gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(f));
+  int x = 70, y = 5;
+  if (image1){
+    gtk_container_remove(GTK_CONTAINER(fixed), image1);
+  }
+  image1 = gtk_image_new_from_file(filename);
+  gtk_widget_show(image1);
+  gtk_container_add(GTK_CONTAINER(fixed), image1);
+  gtk_fixed_move(GTK_FIXED(fixed), image1, y, x);
 }
 
 void on_run_button_clicked(GtkButton *b){
-  printf("la grosse moula");
-  gtk_label_set_text(GTK_LABEL(output_text), (const gchar* ) "Gros chibrax d'enculé de fils de pute ta mère elle suce des glands et elle se fait prendre en levrette par pleins de noirs en chaleur");
+  if(image1){
+    gtk_container_remove(GTK_CONTAINER(fixed), image1);
+    char text[] = "Là c'est censé afficher le texte mais on a pas fini le programme zebi";
+    gtk_label_set_text (GTK_LABEL(output_text), (const gchar*) text);
+  }
+  else{
+    gtk_label_set_text (GTK_LABEL(output_text), (const gchar*) "Choose an image");
+  }
 }
 
 int main(int argc, char *argv[]){
-  printf("la grosse moulaga1311321");
   gtk_init(&argc, &argv);
 
   builder = gtk_builder_new_from_file("interface.glade");
@@ -35,7 +52,7 @@ int main(int argc, char *argv[]){
   gtk_builder_connect_signals(builder, NULL);
 
   fixed = GTK_WIDGET(gtk_builder_get_object(builder, "fixed"));
-  import_button = GTK_WIDGET(gtk_builder_get_object(builder, "import_button"));
+  input_file = GTK_WIDGET(gtk_builder_get_object(builder, "input_file"));
   run_button = GTK_WIDGET(gtk_builder_get_object(builder, "run_button"));
   output_text = GTK_WIDGET(gtk_builder_get_object(builder, "output_text"));
 
