@@ -25,7 +25,7 @@ int main()
                                0.125, 0.25, 0.125,
 			       0.0625, 0.125, 0.0625};
     
-    applying_filter(image, gaussian_kernel);*/
+    applying_filter(image, gaussian_kernel);
     
     unsigned int otsu_value = Otsu_Method(image);
     binarization(image, otsu_value);
