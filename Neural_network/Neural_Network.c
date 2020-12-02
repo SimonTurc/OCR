@@ -10,9 +10,9 @@
 //#define NUM_NEURON_2 16
 #define NUM_NEURON_3 36
 #define ALPHA 0.15
-#define NUM_TRAINING_EX 500
+#define NUM_TRAINING_EX 5
 #define NUM_TEST_EX 100
-#define EPOCH 3000
+#define EPOCH 100
 #define Slope 1.0
 
 layer *lay = NULL;
@@ -445,17 +445,6 @@ void get_desired_outputs(void)
     }
 }
 
-/*void Normalize_matrix(int num_train_actual)
-{
-    for (int i = 0; i < 784; i++)
-    {
-        if (train_image[num_train_actual][i] > 0.0)
-        {
-            train_image[num_train_actual][i] = 1.0;
-        }
-    }
-}*/
-
 void Normalize_flip_matrix(int num_train_actual, double **flip_matrix)
 {
     for (int i = 0; i < 784; i++)
@@ -506,10 +495,10 @@ int dinit(void)
         for (size_t k = 0; k < num_neurons[j + 1]; k++)
         {
             printf("%li \n", k);
-            free(lay[j].neu[k].out_weights);
+            // free(lay[j].neu[k].out_weights);
         }
         printf("%li \n", j);
-        free(lay[j].neu);
+        // free(lay[j].neu);
     }
     free(lay);
     free(num_neurons);
