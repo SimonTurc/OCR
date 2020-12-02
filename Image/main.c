@@ -5,6 +5,7 @@
 #include "filter.h"
 #include "segmentation.h"
 #include "extraction.h"
+#include "matrix_resize.h"
 
 
 

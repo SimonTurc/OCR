@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <SDL.h>
 #include "basics/pixel_operations.h"
+#include "matrix_resize.h"
 
 
 int matrix_col_extract(SDL_Surface* image, int char_nb)
@@ -91,19 +92,25 @@ void extraction(SDL_Surface* image, int char_nb)
   int height = image -> h;
   int start = matrix_col_extract(image,char_nb);
   int x = get_length_col(image, width, start);//First we get the length
+  size_t output_size = 28;
   
-  double* m = (double*) malloc(sizeof(double)* height * x);
-  memset(m, 0, height * x * sizeof(double));
-  m = fill_matrix(image, start, start+x, m);//And then we fill the matrix with 0 - 1
+  double* m = (double*) malloc(sizeof(double) * x * height);
+  double* m1 = (double*) malloc(sizeof(double) * output_size * output_size);
+  memset(m, 0, x * height * sizeof(double));
+  memset(m1, 0, output_size * output_size * sizeof(double));
+  m = fill_matrix(image, start, start+x, m);
+  matrix_resize(m, height, x, m1);//And then we fill the matrix with 0 - 1
   printf("Height: %i\n", height);
   printf("Width: %i\n", x);
-  for(int i = 0; i < height; i++)
+  for(size_t i = 0; i < output_size; i++)
     {
-      for(int j = 0; j < x; j++)
+      for(size_t j = 0; j < output_size; j++)
 	{
-	  printf("%1.f ", m[i*(x)+j]); 
-	  if ((j + 1) % x == 0) putchar('\n');
+	  printf("%1.f ", m1[i*(output_size) + j]);
+	  //printf("%ld   %ld", i, j);  
+	  //if ((j + 1) % x == 0) putchar('\n');
 	}
+      printf("\n");
     }
 }
   

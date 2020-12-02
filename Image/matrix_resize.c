@@ -1,13 +1,9 @@
 #include <stddef.h>
 
-void matrix_resize(unsigned int input[], size_t rows, size_t cols, unsigned int output[])
+void matrix_resize(double input[], size_t rows, size_t cols, double output[])
 {
   size_t output_size = 28;
 
-  for(size_t i = 0; i < output_size * output_size; i++)
-    {
-      output[i] = 0;
-    }
   if(rows > output_size && cols > output_size)
     {
       size_t y0 = (rows - output_size) / 2;
