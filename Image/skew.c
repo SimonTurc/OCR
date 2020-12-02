@@ -43,7 +43,7 @@ double find_angle(SDL_Surface* image)
     double variance = 0;
     double max = 0;
 
-    for(double r = -45; r <= 45; r++)
+    for(double r = -60; r <= 60; r += 2)
     {
 	SDL_Surface* rotation = rotozoomSurface(image, r, 1.0, 0);
 	replace_new_pixels(rotation);
