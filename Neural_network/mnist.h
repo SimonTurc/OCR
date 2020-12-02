@@ -10,14 +10,21 @@ https://github.com/takafumihoriuchi/MNIST_for_C
 #include <string.h>
 
 // set appropriate path for data
+#define TRAIN_IMAGE_LETTRE "./data/emnist-letters-train-images-idx3-ubyte" 
+#define TRAIN_LABEL_LETTRE "./data/emnist-letters-train-labels-idx1-ubyte" 
+#define TEST_IMAGE_LETTRE  "./data/emnist-letters-test-images-idx3-ubyte" 
+#define TEST_LABEL_LETTRE  "./data/emnist-letters-test-labels-idx1-ubyte" 
+
 #define TRAIN_IMAGE "./data/train-images.idx3-ubyte"
 #define TRAIN_LABEL "./data/train-labels.idx1-ubyte"
-#define TEST_IMAGE "./data/t10k-images.idx3-ubyte"
+#define TEST_IMAGE  "./data/t10k-images.idx3-ubyte"
 #define TEST_LABEL "./data/t10k-labels.idx1-ubyte"
 
 #define SIZE 784 // 28*28
-#define NUM_TRAIN 60000
-#define NUM_TEST 10000
+#define NUM_TRAIN 60000/5
+#define NUM_TEST 10000/5
+#define NUM_TRAIN_LETTRE 60000
+#define NUM_TEST_LETTRE 10000
 #define LEN_INFO_IMAGE 4
 #define LEN_INFO_LABEL 2
 
@@ -37,10 +44,15 @@ unsigned char test_image_char[NUM_TEST][SIZE];
 unsigned char train_label_char[NUM_TRAIN][1];
 unsigned char test_label_char[NUM_TEST][1];
 
-double train_image[NUM_TRAIN][SIZE];
-double test_image[NUM_TEST][SIZE];
-int  train_label[NUM_TRAIN];
-int test_label[NUM_TEST];
+unsigned char train_image_char_letter[NUM_TRAIN_LETTRE][SIZE];
+unsigned char test_image_char_letter[NUM_TEST_LETTRE][SIZE];
+unsigned char train_label_char_letter[NUM_TRAIN_LETTRE][1];
+unsigned char test_label_char_letter[NUM_TEST_LETTRE][1];
+
+double train_image[NUM_TRAIN + NUM_TRAIN_LETTRE][SIZE];
+double test_image[NUM_TEST + NUM_TEST_LETTRE][SIZE];
+int  train_label[NUM_TRAIN + NUM_TRAIN_LETTRE];
+int test_label[NUM_TEST+ NUM_TRAIN_LETTRE];
 
 
 void FlipLong(unsigned char * ptr)
@@ -66,7 +78,7 @@ void read_mnist_char(char *file_path, int num_data, int len_info, int arr_n, uns
     unsigned char *ptr;
 
     if ((fd = open(file_path, O_RDONLY)) == -1) {
-        fprintf(stderr, "couldn't open image file");
+        fprintf(stderr, "couldn't open image file \n");
         exit(-1);
     }
     
@@ -90,36 +102,55 @@ void read_mnist_char(char *file_path, int num_data, int len_info, int arr_n, uns
 }
 
 
-void image_char2double(int num_data, unsigned char data_image_char[][SIZE], double data_image[][SIZE])
+void image_char2double(int num_data, unsigned char data_image_char[][SIZE],unsigned char data_image_char_letter[][SIZE], double data_image[][SIZE])
 {
     int i, j;
     for (i=0; i<num_data; i++)
         for (j=0; j<SIZE; j++)
-            data_image[i][j]  = (double)data_image_char[i][j] / 255.0;
+            if (i% 5 == 0)
+            {
+                data_image[i][j]  = (double)data_image_char[i][j] / 255.0;
+            }
+            else
+            {
+                data_image[i][j]  = (double)data_image_char_letter[i][j] / 255.0;
+            }
+            
 }
 
 
-void label_char2int(int num_data, unsigned char data_label_char[][1], int data_label[])
+void label_char2int(int num_data, unsigned char data_label_char[][1],unsigned char data_label_char_letter[][1], int data_label[])
 {
     int i;
     for (i=0; i<num_data; i++)
-        data_label[i]  = (int)data_label_char[i][0];
+        if (i% 5 == 0)
+        {
+            data_label[i]  = (int)data_label_char[i][0];
+        }
+        else
+        {
+            data_label[i]  = (int)data_label_char_letter[i][0];
+        }
 }
 
 
 void load_mnist()
 {
     read_mnist_char(TRAIN_IMAGE, NUM_TRAIN, LEN_INFO_IMAGE, SIZE, train_image_char, info_image);
-    image_char2double(NUM_TRAIN, train_image_char, train_image);
+    read_mnist_char(TRAIN_IMAGE_LETTRE, NUM_TRAIN_LETTRE, LEN_INFO_IMAGE, SIZE, train_image_char_letter, info_image);
+    image_char2double(NUM_TRAIN + NUM_TRAIN_LETTRE, train_image_char,train_image_char_letter, train_image);
 
     read_mnist_char(TEST_IMAGE, NUM_TEST, LEN_INFO_IMAGE, SIZE, test_image_char, info_image);
-    image_char2double(NUM_TEST, test_image_char, test_image);
+    read_mnist_char(TEST_IMAGE_LETTRE, NUM_TEST_LETTRE, LEN_INFO_IMAGE, SIZE, test_image_char_letter, info_image);
+    image_char2double(NUM_TEST + NUM_TEST_LETTRE, test_image_char,test_image_char_letter, test_image);
     
     read_mnist_char(TRAIN_LABEL, NUM_TRAIN, LEN_INFO_LABEL, 1, train_label_char, info_label);
-    label_char2int(NUM_TRAIN, train_label_char, train_label);
+    read_mnist_char(TRAIN_LABEL_LETTRE, NUM_TRAIN_LETTRE, LEN_INFO_LABEL, 1, train_label_char_letter, info_label);
+    label_char2int(NUM_TRAIN + NUM_TRAIN_LETTRE, train_label_char,train_label_char_letter, train_label);
     
     read_mnist_char(TEST_LABEL, NUM_TEST, LEN_INFO_LABEL, 1, test_label_char, info_label);
-    label_char2int(NUM_TEST, test_label_char, test_label);
+    read_mnist_char(TEST_LABEL_LETTRE, NUM_TEST_LETTRE, LEN_INFO_LABEL, 1, test_label_char_letter, info_label);
+    label_char2int(NUM_TEST + NUM_TEST_LETTRE, test_label_char,test_label_char_letter, test_label);
 }
 
 

@@ -25,7 +25,7 @@ int create_architecture(void);
 int initialize_weights(void);
 void feed_input(int i);
 void train_neural_net(void);
-void forward_prop(void);
+void forward_prop(int i);
 void compute_cost(int i);
 void back_prop(void);
 void update_weights(void);
@@ -34,7 +34,7 @@ void get_desired_outputs(void);
 void test_nn(void);
 void serialize(void);
 void deserialize(char *bot);
-void Normalize_matrix(int num_train_actual);
+void Normalize_flip_matrix(int num_train_actual, double **flip_matrix);
 void calc_error(int i);
 double randomWeight(void);
 
