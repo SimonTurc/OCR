@@ -27,7 +27,7 @@ int initialize_weights(void);
 void feed_input(int i);
 void train_neural_net(void);
 void forward_prop_train(int i);
-char forward_prop_predict(void);
+char forward_prop_predict(int i);
 void compute_cost(int i);
 void back_prop(void);
 void update_weights(void);

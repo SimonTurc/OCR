@@ -3,13 +3,13 @@
 #define MAX_LENGHT 20
 #define NUM_LAYERS 3
 #define NUM_NEURON_0 784
-#define NUM_NEURON_1 54
+#define NUM_NEURON_1 76
 //#define NUM_NEURON_2 16
 #define NUM_NEURON_3 36
 #define ALPHA 0.15
-#define NUM_TRAINING_EX 100
+#define NUM_TRAINING_EX 200
 #define NUM_TEST_EX 100
-#define EPOCH 500
+#define EPOCH 100
 #define Slope 1.0
 
 layer *lay = NULL;
@@ -26,7 +26,7 @@ int main(void)
 {
     int i;
 
-    /*num_layers = NUM_LAYERS;
+    num_layers = NUM_LAYERS;
 
     num_neurons = (int *)malloc(num_layers * sizeof(int));
     memset(num_neurons, 0, num_layers * sizeof(int));
@@ -41,8 +41,8 @@ int main(void)
     {
         printf("Error in Initialization...\n");
         exit(0);
-    }*/
-    deserialize("bot.txt");
+    }
+    // deserialize("bot.txt");
     input = (double **)malloc(NUM_TRAINING_EX * sizeof(double *));
     for (i = 0; i < NUM_TRAINING_EX; i++)
     {
@@ -66,8 +66,8 @@ int main(void)
     // Get Output Labels
     // int out[4] = {0,1,1,0};
     get_desired_outputs();
-    // train_neural_net();
-    // serialize();
+    train_neural_net();
+    serialize();
     test_nn();
 
     if (dinit() != SUCCESS_DINIT)
@@ -260,7 +260,7 @@ void forward_prop_train(int current_training)
     }
 }
 
-char forward_prop_predict(void)
+char forward_prop_predict(int current_training)
 {
     double max = 0;
     int result = 0;
@@ -291,11 +291,22 @@ char forward_prop_predict(void)
     }
     if (result > 9)
     {
-        letter = (char)(result - 9 + 65);
+        letter = (char)(result - 9 + 64);
     }
     else
     {
         letter = (char)(result + 48);
+    }
+
+    if (current_training % 5 != 0)
+    {
+        result -= 9;
+    }
+    printf("Result : %d\n", result);
+
+    if (result == desired_outputs[current_training])
+    {
+        success++;
     }
 
     return letter;
@@ -414,18 +425,18 @@ void serialize(void)
 {
     FILE *file = fopen("bot.txt", "w+");
     fprintf(file, "%d\n", num_layers);
-    for (size_t i = 0; i < num_layers; i++)
+    for (int i = 0; i < num_layers; i++)
     {
         fprintf(file, "%d\n", num_neurons[i]);
     }
-    for (size_t i = 0; i < num_layers; i++)
+    for (int i = 0; i < num_layers; i++)
     {
-        for (size_t j = 0; j < num_neurons[i]; j++)
+        for (int j = 0; j < num_neurons[i]; j++)
         {
             fprintf(file, "%f\n", lay[i].neu[j].bias);
             if (i < num_layers - 1)
             {
-                for (size_t k = 0; k < num_neurons[i + 1]; k++)
+                for (int k = 0; k < num_neurons[i + 1]; k++)
                 {
                     fprintf(file, "%f\n", lay[i].neu[j].out_weights[k]);
                 }
@@ -445,22 +456,22 @@ void deserialize(char *bot)
     fgets(str, MAX_LENGHT, file);
     num_layers = atoi(str);
     num_neurons = (int *)malloc(num_layers * sizeof(int));
-    for (size_t i = 0; i < num_layers; i++)
+    for (int i = 0; i < num_layers; i++)
     {
         fgets(str, MAX_LENGHT, file);
         num_neurons[i] = atoi(str);
         printf("%d \n", num_neurons[i]);
     }
     init();
-    for (size_t i = 0; i < num_layers; i++)
+    for (int i = 0; i < num_layers; i++)
     {
-        for (size_t j = 0; j < num_neurons[i]; j++)
+        for (int j = 0; j < num_neurons[i]; j++)
         {
             fgets(str, MAX_LENGHT, file);
             lay[i].neu[j].bias = atof(str);
             if (i < num_layers - 1)
             {
-                for (size_t k = 0; k < num_neurons[i + 1]; k++)
+                for (int k = 0; k < num_neurons[i + 1]; k++)
                 {
                     fgets(str, MAX_LENGHT, file);
                     lay[i].neu[j].out_weights[k] = atof(str);
@@ -524,7 +535,9 @@ void test_nn(void)
     for (i = 0; i < NUM_TRAINING_EX; i++)
     {
         feed_input(i);
-        forward_prop_train(i);
+        // forward_prop_train(i);
+        char letter = forward_prop_predict(i);
+        printf("%c", letter);
         /*for (i = 0; i < num_neurons[0]; i++)
         {
             lay[0].neu[i].actv = train_image[j][i];
@@ -542,21 +555,21 @@ char predict(double *matrix)
     {
         lay[0].neu[i].actv = matrix[i];
     }
-    char charcter = forward_prop_predict();
+    char charcter = forward_prop_predict(0);
     return charcter;
 }
 
 int dinit(void)
 {
-    for (size_t i = 0; i < NUM_TRAINING_EX; i++)
+    for (int i = 0; i < NUM_TRAINING_EX; i++)
     {
         free(input[i]);
     }
     free(input);
     free(desired_outputs);
-    for (size_t j = 0; j < num_layers; j++)
+    for (int j = 0; j < num_layers; j++)
     {
-        for (size_t k = 0; k < num_neurons[j]; k++)
+        for (int k = 0; k < num_neurons[j]; k++)
         {
             if (j < num_layers - 1)
             {

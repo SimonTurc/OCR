@@ -139,7 +139,7 @@ char forward_prop_predict(int num_layers, int *num_neurons)
     }
     if (result > 9)
     {
-        letter = (char)(result - 9 + 65);
+        letter = (char)(result - 9 + 64);
     }
     else
     {

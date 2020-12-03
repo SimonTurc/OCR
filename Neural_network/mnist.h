@@ -1,7 +1,5 @@
-/*
-Takafumi Hoiruchi. 2018.
-https://github.com/takafumihoriuchi/MNIST_for_C
-*/
+#ifndef MNIST_H
+#define MNIST_H
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -190,6 +188,7 @@ void print_mnist_pixel(double data_image[][SIZE], int num_data)
     }
 }
 
+#endif
 
 /*void print_mnist_label(int data_label[], int num_data)
 {
@@ -254,3 +253,5 @@ void save_mnist_pgm(double data_image[][SIZE], int index)
 
     save_image(n, "");
 }*/
+
+
