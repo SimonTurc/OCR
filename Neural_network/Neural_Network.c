@@ -46,10 +46,10 @@ int main(void)
         exit(0);
     }
 
-    input = (double **)malloc(NUM_TRAINING_EX * sizeof(float *));
+    input = (double **)malloc(NUM_TRAINING_EX * sizeof(double *));
     for (i = 0; i < NUM_TRAINING_EX; i++)
     {
-        input[i] = (double *)malloc(num_neurons[0] * sizeof(float));
+        input[i] = (double *)malloc(num_neurons[0] * sizeof(double));
     }
 
     desired_outputs = (float *)malloc(NUM_TRAINING_EX * sizeof(float *));

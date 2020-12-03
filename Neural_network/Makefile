@@ -1,5 +1,6 @@
+CC =gcc -fsanitize=address
 LDFLAGS = -pthread -lpthread
-CFLAGS = -g -Wall -Werror
+CFLAGS = -g -Wall -Werror 
 backprop: backprop.o layer.o neuron.o
 	$(CC) $(LDFLAGS) -o main Neural_Network.o layer.o neuron.o -lm
 

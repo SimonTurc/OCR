@@ -21,8 +21,8 @@ https://github.com/takafumihoriuchi/MNIST_for_C
 #define TEST_LABEL "./data/t10k-labels.idx1-ubyte"
 
 #define SIZE 784 // 28*28
-#define NUM_TRAIN 60000/5
-#define NUM_TEST 10000/5
+#define NUM_TRAIN 60000/4
+#define NUM_TEST 10000/4
 #define NUM_TRAIN_LETTRE 60000
 #define NUM_TEST_LETTRE 10000
 #define LEN_INFO_IMAGE 4
@@ -102,34 +102,49 @@ void read_mnist_char(char *file_path, int num_data, int len_info, int arr_n, uns
 }
 
 
-void image_char2double(int num_data, unsigned char data_image_char[][SIZE],unsigned char data_image_char_letter[][SIZE], double data_image[][SIZE])
+void image_char2double(int num_data,int num_data_letter, unsigned char data_image_char[][SIZE],unsigned char data_image_char_letter[][SIZE], double data_image[][SIZE])
 {
     int i, j;
-    for (i=0; i<num_data; i++)
-        for (j=0; j<SIZE; j++)
-            if (i% 5 == 0)
-            {
-                data_image[i][j]  = (double)data_image_char[i][j] / 255.0;
-            }
-            else
-            {
-                data_image[i][j]  = (double)data_image_char_letter[i][j] / 255.0;
-            }
-            
-}
+    int a = 0;
+    int b =0;
 
-
-void label_char2int(int num_data, unsigned char data_label_char[][1],unsigned char data_label_char_letter[][1], int data_label[])
-{
-    int i;
-    for (i=0; i<num_data; i++)
+    for (i=0; i<num_data + num_data_letter; i++)
+    {
         if (i% 5 == 0)
         {
-            data_label[i]  = (int)data_label_char[i][0];
+            for (j=0; j<SIZE; j++)
+            {
+                data_image[i][j]  = (double)data_image_char[a][j] / 255.0;
+            }
+            a++;
         }
         else
         {
-            data_label[i]  = (int)data_label_char_letter[i][0];
+            for (j=0; j<SIZE; j++)
+            {
+                data_image[i][j]  = (double)data_image_char_letter[b][j] / 255.0;
+            }
+            b++;
+        } 
+    }      
+}
+
+
+void label_char2int(int num_data,int num_data_letter, unsigned char data_label_char[][1],unsigned char data_label_char_letter[][1], int data_label[])
+{
+    int i;
+    int a = 0;
+    int b =0;
+    for (i=0; i<num_data + num_data_letter; i++)
+        if (i% 5 == 0)
+        {
+            data_label[i]  = (int)data_label_char[a][0];
+            a++;
+        }
+        else
+        {
+            data_label[i]  = (int)data_label_char_letter[b][0];
+            b++;
         }
 }
 
@@ -138,19 +153,19 @@ void load_mnist()
 {
     read_mnist_char(TRAIN_IMAGE, NUM_TRAIN, LEN_INFO_IMAGE, SIZE, train_image_char, info_image);
     read_mnist_char(TRAIN_IMAGE_LETTRE, NUM_TRAIN_LETTRE, LEN_INFO_IMAGE, SIZE, train_image_char_letter, info_image);
-    image_char2double(NUM_TRAIN + NUM_TRAIN_LETTRE, train_image_char,train_image_char_letter, train_image);
+    image_char2double(NUM_TRAIN , NUM_TRAIN_LETTRE, train_image_char,train_image_char_letter, train_image);
 
     read_mnist_char(TEST_IMAGE, NUM_TEST, LEN_INFO_IMAGE, SIZE, test_image_char, info_image);
     read_mnist_char(TEST_IMAGE_LETTRE, NUM_TEST_LETTRE, LEN_INFO_IMAGE, SIZE, test_image_char_letter, info_image);
-    image_char2double(NUM_TEST + NUM_TEST_LETTRE, test_image_char,test_image_char_letter, test_image);
+    image_char2double(NUM_TEST , NUM_TEST_LETTRE, test_image_char,test_image_char_letter, test_image);
     
     read_mnist_char(TRAIN_LABEL, NUM_TRAIN, LEN_INFO_LABEL, 1, train_label_char, info_label);
     read_mnist_char(TRAIN_LABEL_LETTRE, NUM_TRAIN_LETTRE, LEN_INFO_LABEL, 1, train_label_char_letter, info_label);
-    label_char2int(NUM_TRAIN + NUM_TRAIN_LETTRE, train_label_char,train_label_char_letter, train_label);
+    label_char2int(NUM_TRAIN , NUM_TRAIN_LETTRE, train_label_char,train_label_char_letter, train_label);
     
     read_mnist_char(TEST_LABEL, NUM_TEST, LEN_INFO_LABEL, 1, test_label_char, info_label);
     read_mnist_char(TEST_LABEL_LETTRE, NUM_TEST_LETTRE, LEN_INFO_LABEL, 1, test_label_char_letter, info_label);
-    label_char2int(NUM_TEST + NUM_TEST_LETTRE, test_label_char,test_label_char_letter, test_label);
+    label_char2int(NUM_TEST , NUM_TEST_LETTRE, test_label_char,test_label_char_letter, test_label);
 }
 
 
