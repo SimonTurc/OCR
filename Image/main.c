@@ -14,37 +14,43 @@
 int main()
 {
     SDL_Surface* image;
+    SDL_Surface* image_rotate;
+    SDL_Surface* line;
+    double angle = 0;
+    int nb_lines = 0;
+    int char_per_line = 0;
+    unsigned int otsu_value = 0;
 
-    image = load_image("test_image/test.bmp");
-    
-    init_sdl();
-
-
-    
     float gaussian_kernel[] = {0.0625, 0.125, 0.0625,
                                0.125, 0.25, 0.125,
 			       0.0625, 0.125, 0.0625};
     
+    
+    image = load_image("test_image/test.jpg");
+    
+    init_sdl();
+    
+    
     applying_filter(image, gaussian_kernel);
     
-    unsigned int otsu_value = Otsu_Method(image);
+    otsu_value = Otsu_Method(image);
     binarization(image, otsu_value);
 
 
-    double angle = find_angle(image);
+    angle = find_angle(image);
     
-    SDL_Surface* image_rotate = rotozoomSurface(image, angle, 1.0, 0);
+    image_rotate = rotozoomSurface(image, angle, 1.0, 0);
     replace_new_pixels(image_rotate);
 
     horizontal_histogram(image_rotate);
 
 
-    int nb_lines = number_of_lines(image_rotate);
-    int char_per_line = 0;
+    nb_lines = number_of_lines(image_rotate);
+    char_per_line = 0;
     
     for(int i = 1; i <= nb_lines; i++)
     {
-	SDL_Surface* line = cut_image(image_rotate,i);
+	line = cut_image(image_rotate,i);
 	
 	vertical_histogram(line);
    
@@ -52,9 +58,9 @@ int main()
 	printf("In line %i there are %i characters\n",i,char_per_line);
         
 	for(int j = 1; j <= char_per_line; j++)
-	  {
+	{
 	    extraction(line, j);
-	  }
+	}
 	 
 	  
 	SDL_FreeSurface(line);
