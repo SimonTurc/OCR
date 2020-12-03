@@ -9,17 +9,7 @@ LDLIBS= `pkg-config --libs sdl` -lSDL_image -lSDL_gfx
 
 all: main
 
-main: Image/basics/pixel_operations.o  Image/basics/sdl_basics.o Image/filter.o Image/segmentation.o Image/extraction.o Image/matrix_resize.o Image/skew.o Neural_network/backprop.o Neural_network/layer.o Neural_network/neuron.o
-
-
-backprop.o: Neural_Network.c
-	$(CC) $(CFLAGS) -c Neural_Network.c
-
-layer.o: layer.c
-	$(CC) $(CFLAGS) -c layer.c
-
-neuron.o: neuron.c
-	$(CC) $(CFLAGS) -c neuron.c
+main: Image/basics/pixel_operations.o  Image/basics/sdl_basics.o Image/filter.o Image/segmentation.o Image/extraction.o Image/matrix_resize.o Image/skew.o Neural_network/Neural_Network.o Neural_network/layer.o Neural_network/neuron.o
 
 clean:
 	${RM} *.o
