@@ -2,6 +2,7 @@
 #define BACKPROP_H
 
 #include "layer.h"
+#include "mnist.h"
 
 #define SUCCESS_INIT 0
 #define ERR_INIT 1
@@ -25,7 +26,7 @@ int create_architecture(void);
 int initialize_weights(void);
 void feed_input(int i);
 void train_neural_net(void);
-void forward_prop(int i);
+void forward_prop_train(int i);
 void compute_cost(int i);
 void back_prop(void);
 void update_weights(void);

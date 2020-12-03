@@ -1,7 +1,4 @@
 #include "backprop.h"
-#include "layer.h"
-#include "mnist.h"
-#include "neuron.h"
 
 #define MAX_LENGHT 20
 #define NUM_LAYERS 3
@@ -223,7 +220,7 @@ void feed_input(int i)
     printf("Input: %d\n", train_label[i]);
 }
 
-void forward_prop(int current_training)
+void forward_prop_train(int current_training)
 {
     double max = 0;
     int result = 0;
@@ -261,6 +258,47 @@ void forward_prop(int current_training)
     {
         success++;
     }
+}
+
+char forward_prop_predict(void)
+{
+    double max = 0;
+    int result = 0;
+    char letter;
+    for (int i = 1; i < num_layers; i++)
+    {
+        for (int j = 0; j < num_neurons[i]; j++)
+        {
+            double sum = lay[i].neu[j].bias; // adding bias of the neuron
+
+            for (int k = 0; k < num_neurons[i - 1]; k++)
+            {
+                sum += lay[i - 1].neu[k].out_weights[j] * lay[i - 1].neu[k].actv;
+            }
+            double output = sigmoid(sum);
+            lay[i].neu[j].actv = output;
+            lay[i].neu[j].grad = sigmoidDerivative(lay[i].neu[j].actv);
+            // printf("Output[%i][%i]: %f\n", i, j, lay[i].neu[j].actv);
+        }
+    }
+    for (int i = 0; i < num_neurons[num_layers - 1]; i++)
+    {
+        if (max < lay[num_layers - 1].neu[i].actv)
+        {
+            max = lay[num_layers - 1].neu[i].actv;
+            result = i;
+        }
+    }
+    if (result > 9)
+    {
+        letter = (char)(result - 9 + 65);
+    }
+    else
+    {
+        letter = (char)(result + 48);
+    }
+
+    return result;
 }
 
 // Back Propogate Error
@@ -362,7 +400,7 @@ void train_neural_net(void)
         for (i = 0; i < NUM_TRAINING_EX; i++)
         {
             feed_input(i);
-            forward_prop(i);
+            forward_prop_train(i);
             calc_error(i);
             back_prop();
         }
@@ -486,7 +524,7 @@ void test_nn(void)
     for (i = 0; i < NUM_TRAINING_EX; i++)
     {
         feed_input(i);
-        forward_prop(i);
+        forward_prop_train(i);
         /*for (i = 0; i < num_neurons[0]; i++)
         {
             lay[0].neu[i].actv = train_image[j][i];
@@ -496,6 +534,16 @@ void test_nn(void)
         j++;*/
     }
     printf("Accuracy : %f\n", success / NUM_TRAINING_EX);
+}
+
+char predict(double *matrix)
+{
+    for (int i = 0; i < num_neurons[0]; i++)
+    {
+        lay[0].neu[i].actv = matrix[i];
+    }
+    char charcter = forward_prop_predict();
+    return charcter;
 }
 
 int dinit(void)
