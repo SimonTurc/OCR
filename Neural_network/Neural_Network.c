@@ -1,13 +1,14 @@
 #include "backprop.h"
+#include "dataset.h"
 
 #define MAX_LENGHT 20
 #define NUM_LAYERS 3
 #define NUM_NEURON_0 784
-#define NUM_NEURON_1 76
+#define NUM_NEURON_1 56
 //#define NUM_NEURON_2 16
-#define NUM_NEURON_3 36
+#define NUM_NEURON_3 26
 #define ALPHA 0.15
-#define NUM_TRAINING_EX 200
+#define NUM_TRAINING_EX 52
 #define NUM_TEST_EX 100
 #define EPOCH 100
 #define Slope 1.0
@@ -65,9 +66,9 @@ int main(void)
     // get_inputs();
     // Get Output Labels
     // int out[4] = {0,1,1,0};
-    get_desired_outputs();
-    train_neural_net();
-    serialize();
+    // get_desired_outputs();
+    // train_neural_net();
+    // serialize();
     test_nn();
 
     if (dinit() != SUCCESS_DINIT)
@@ -210,8 +211,8 @@ void feed_input(int i)
 {
     for (int j = 0; j < num_neurons[0]; j++)
     {
-        lay[0].neu[j].actv = input[i][j];
-
+        // lay[0].neu[j].actv = input[i][j];
+        lay[0].neu[j].actv = dataset_train[i][j];
         // printf("%1.f ", input[i][j]);
         // if ((j + 1) % 28 == 0)
         // putchar('\n');
@@ -248,10 +249,11 @@ void forward_prop_train(int current_training)
             result = i;
         }
     }
+    /*
     if (current_training % 5 != 0)
     {
         result -= 9;
-    }
+    }*/
 
     printf("Result : %d\n", result);
     if (result == desired_outputs[current_training])
@@ -289,25 +291,15 @@ char forward_prop_predict(int current_training)
             result = i;
         }
     }
-    if (result > 9)
-    {
-        letter = (char)(result - 9 + 64);
-    }
-    else
-    {
-        letter = (char)(result + 48);
-    }
 
-    if (current_training % 5 != 0)
-    {
-        result -= 9;
-    }
-    printf("Result : %d\n", result);
-
-    if (result == desired_outputs[current_training])
+    if (result == dataset_label[current_training])
     {
         success++;
     }
+
+    letter = (char)(result + 64);
+
+    printf("Result : %d\n", result);
 
     return letter;
 }
@@ -532,12 +524,12 @@ void test_nn(void)
 {
     int i;
     success = 0;
-    for (i = 0; i < NUM_TRAINING_EX; i++)
+    for (i = 0; i < 1; i++)
     {
         feed_input(i);
         // forward_prop_train(i);
         char letter = forward_prop_predict(i);
-        printf("%c", letter);
+        printf("%c\n", letter);
         /*for (i = 0; i < num_neurons[0]; i++)
         {
             lay[0].neu[i].actv = train_image[j][i];
