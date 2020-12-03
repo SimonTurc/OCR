@@ -55,11 +55,11 @@ int main()
 	vertical_histogram(line);
    
 	char_per_line = count_char(line);
-	printf("In line %i there are %i characters\n",i,char_per_line);
+	//printf("In line %i there are %i characters\n",i,char_per_line);
         
 	for(int j = 1; j <= char_per_line; j++)
 	{
-	    extraction(line, j);
+	    printf("%c\n", extraction(line, j));
 	}
 	 
 	  

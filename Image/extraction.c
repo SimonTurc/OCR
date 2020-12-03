@@ -3,6 +3,7 @@
 #include <SDL.h>
 #include "basics/pixel_operations.h"
 #include "matrix_resize.h"
+#include "../Neural_network/backprop.h"
 
 
 int count_char(SDL_Surface* image)
@@ -121,34 +122,40 @@ double* fill_matrix(SDL_Surface* image, int start_col, int end_col, double* m)
 
 
 
-void extraction(SDL_Surface* image, int char_nb)
+char extraction(SDL_Surface* image, int char_nb)
 {
-  int width = image -> w;
-  int height = image -> h;
-  int start = matrix_col_extract(image,char_nb);
-  int x = get_length_col(image, width, start);//First we get the length
-  size_t output_size = 28;
+    char letter;
+    int width = image -> w;
+    int height = image -> h;
+    int start = matrix_col_extract(image,char_nb);
+    int x = get_length_col(image, width, start);//First we get the length
+    size_t output_size = 28;
   
-  double* m = (double*) malloc(sizeof(double) * x * height);
-  double* m1 = (double*) malloc(sizeof(double) * output_size * output_size);
-  memset(m, 0, x * height * sizeof(double));
-  memset(m1, 0, output_size * output_size * sizeof(double));
-  m = fill_matrix(image, start, start+x, m);
-  matrix_resize(m, height, x, m1);//And then we fill the matrix with 0 - 1
-  printf("Height: %i\n", height);
-  printf("Width: %i\n", x);
-  for(size_t i = 0; i < output_size; i++)
-    {
-      for(size_t j = 0; j < output_size; j++)
-	{
-	  printf("%1.f ", m1[i*(output_size) + j]);
-	  //printf("%ld   %ld", i, j);  
-	  //if ((j + 1) % x == 0) putchar('\n');
-	}
-      printf("\n");
-    }
-  free(m);
-  free(m1);
+    double* m = (double*) malloc(sizeof(double) * x * height);
+    double* m1 = (double*) malloc(sizeof(double) * output_size * output_size);
+    memset(m, 0, x * height * sizeof(double));
+    memset(m1, 0, output_size * output_size * sizeof(double));
+    m = fill_matrix(image, start, start+x, m);
+    matrix_resize(m, height, x, m1); //And then we fill the matrix with 0 - 1
+  
+    /*for(size_t i = 0; i < output_size; i++)
+      {
+        for(size_t j = 0; j < output_size; j++)
+        {
+          printf("%1.f ", m1[i*(output_size) + j]);
+          //printf("%ld   %ld", i, j);  
+          //if ((j + 1) % x == 0) putchar('\n');
+        }
+        printf("\n");
+      }*/
+
+    deserialize("bot.txt");
+    letter = predict(m1);
+      
+    free(m);
+    free(m1);
+
+    return letter;
 }
   
 
