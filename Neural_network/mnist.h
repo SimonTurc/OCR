@@ -82,7 +82,11 @@ void read_mnist_char(char *file_path, int num_data, int len_info, int arr_n, uns
         exit(-1);
     }
     
-    read(fd, info_arr, len_info * sizeof(int));
+    if (read(fd, info_arr, len_info * sizeof(int)) == -1)
+    {
+        printf("pipo");
+        exit(-1);
+    }
     
     // read-in information about size of data
     for (i=0; i<len_info; i++) 
@@ -95,7 +99,11 @@ void read_mnist_char(char *file_path, int num_data, int len_info, int arr_n, uns
     // read-in mnist numbers (pixels|labels)
     for (i=0; i<num_data; i++) 
     {
-        read(fd, data_char[i], arr_n * sizeof(unsigned char));   
+        if (read(fd, data_char[i], arr_n * sizeof(unsigned char))== -1)
+        {
+           printf("pipo");
+            exit(-1); 
+        }   
     }
 
     close(fd);
@@ -183,7 +191,7 @@ void print_mnist_pixel(double data_image[][SIZE], int num_data)
 }
 
 
-void print_mnist_label(int data_label[], int num_data)
+/*void print_mnist_label(int data_label[], int num_data)
 {
     int i;
     if (num_data == NUM_TRAIN)
@@ -192,11 +200,11 @@ void print_mnist_label(int data_label[], int num_data)
     else
         for (i=0; i<num_data; i++)
             printf("test_label[%d]: %d\n", i, test_label[i]);
-}
+}*/
 
 
 // name: path for saving image (ex: "./images/sample.pgm")
-void save_image(int n, char name[])
+/*void save_image(int n, char name[])
 {
     char file_name[MAX_FILENAME];
     FILE *fp;
@@ -245,4 +253,4 @@ void save_mnist_pgm(double data_image[][SIZE], int index)
     }
 
     save_image(n, "");
-}
+}*/
