@@ -298,7 +298,7 @@ char forward_prop_predict(void)
         letter = (char)(result + 48);
     }
 
-    return result;
+    return letter;
 }
 
 // Back Propogate Error
