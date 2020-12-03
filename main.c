@@ -2,12 +2,12 @@
 #include "SDL/SDL.h"
 #include "SDL/SDL_image.h"
 #include "SDL/SDL_rotozoom.h"
-#include "basics/sdl_basics.h"
-#include "filter.h"
-#include "segmentation.h"
-#include "extraction.h"
-#include "matrix_resize.h"
-#include "skew.h"
+#include "Image/basics/sdl_basics.h"
+#include "Image/filter.h"
+#include "Image/segmentation.h"
+#include "Image/extraction.h"
+#include "Image/matrix_resize.h"
+#include "Image/skew.h"
 
 
 

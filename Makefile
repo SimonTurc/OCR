@@ -9,11 +9,13 @@ LDLIBS= `pkg-config --libs sdl` -lSDL_image -lSDL_gfx
 
 all: main
 
-main: basics/pixel_operations.o  basics/sdl_basics.o filter.o segmentation.o extraction.o matrix_resize.o skew.o
+main: Image/basics/pixel_operations.o  Image/basics/sdl_basics.o Image/filter.o Image/segmentation.o Image/extraction.o Image/matrix_resize.o Image/skew.o
 
 
 clean:
 	${RM} *.o
+	${RM} Image/*.o
+	${RM} Image/*.d
 	${RM} *.d
 	${RM} main
 
