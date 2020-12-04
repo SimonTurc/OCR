@@ -148,7 +148,7 @@ char extraction(SDL_Surface *image, int char_nb)
             // printf("\n");
         }
     }
-    // printf("},");
+    // printf("},\n");
     letter = predict(m1);
 
     // letter = 'a';

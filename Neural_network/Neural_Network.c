@@ -8,8 +8,8 @@
 //#define NUM_NEURON_2 16
 #define NUM_NEURON_3 26
 #define ALPHA 0.15
-#define NUM_TRAINING_EX 104
-#define NUM_TEST_EX 10
+#define NUM_TRAINING_EX 156
+#define NUM_TEST_EX 20
 #define EPOCH 500
 #define Slope 1.0
 

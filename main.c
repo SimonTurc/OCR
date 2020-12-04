@@ -59,7 +59,7 @@ int main()
 
         char_per_line = count_char(line);
         // printf("In line %i there are %i characters\n",i,char_per_line);
-
+        // printf(" char per line :%i\n", char_per_line);
         for (int j = 1; j <= char_per_line; j++)
         {
             printf("%c", extraction(line, j));
@@ -68,8 +68,8 @@ int main()
             // printf("%i,", number);
             // number++;
         }
-        SDL_FreeSurface(line);
         printf("\n");
+        SDL_FreeSurface(line);
     }
     // printf("};");
 
