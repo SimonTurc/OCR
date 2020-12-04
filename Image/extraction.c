@@ -130,7 +130,8 @@ char extraction(SDL_Surface *image, int char_nb)
     {
         for (size_t j = 0; j < output_size; j++)
         {
-            /*if (i == output_size - 1 && i == j)
+            /*
+            if (i == output_size - 1 && i == j)
             {
                 printf("%1.f ", m1[i * (output_size) + j]);
             }
