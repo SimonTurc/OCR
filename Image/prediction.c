@@ -47,7 +47,7 @@ int create_architecture(int num_layers, int *num_neurons)
 
 char deserialize(double *matrix)
 {
-    FILE *file = fopen("Image/nn.txt", "r");
+    FILE *file = fopen("Image/bot.txt", "r");
     if (file == NULL)
     {
         printf("couldn't open file ...\n");
@@ -137,15 +137,7 @@ char forward_prop_predict(int num_layers, int *num_neurons)
             result = i;
         }
     }
-    if (result > 9)
-    {
-        letter = (char)(result - 9 + 64);
-    }
-    else
-    {
-        letter = (char)(result + 48);
-    }
-
+    letter = (char)(result + 65);
     return letter;
 }
 

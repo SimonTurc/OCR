@@ -30,7 +30,7 @@ int main()
 
     float gaussian_kernel[] = {0.0625, 0.125, 0.0625, 0.125, 0.25, 0.125, 0.0625, 0.125, 0.0625};
 
-    image = load_image("test_image/p.png");
+    image = load_image("test_image/test.jpg");
 
     init_sdl();
 
@@ -48,7 +48,9 @@ int main()
 
     nb_lines = number_of_lines(image_rotate);
     char_per_line = 0;
-    int number = 0;
+    // int number = 0;
+    // printf("double dataset_train[61][784] = { \n");
+    // printf("double dataset_label[62] = {");
     for (int i = 1; i <= nb_lines; i++)
     {
         line = cut_image(image_rotate, i);
@@ -60,14 +62,16 @@ int main()
 
         for (int j = 1; j <= char_per_line; j++)
         {
-            printf("dataset_train[%i][784] = { \n", number);
-            extraction(line, j);
-            printf(";\n");
-            printf("dataset_label[%i] = %i ;\n", number, number);
-            number++;
+            printf("%c", extraction(line, j));
+            // extraction(line, j);
+            // printf(",\n");
+            // printf("%i,", number);
+            // number++;
         }
         SDL_FreeSurface(line);
+        printf("\n");
     }
+    // printf("};");
 
     SDL_FreeSurface(image);
 

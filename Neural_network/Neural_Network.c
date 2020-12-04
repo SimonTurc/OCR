@@ -8,9 +8,9 @@
 //#define NUM_NEURON_2 16
 #define NUM_NEURON_3 26
 #define ALPHA 0.15
-#define NUM_TRAINING_EX 52
-#define NUM_TEST_EX 100
-#define EPOCH 100
+#define NUM_TRAINING_EX 104
+#define NUM_TEST_EX 10
+#define EPOCH 500
 #define Slope 1.0
 
 layer *lay = NULL;
@@ -66,9 +66,9 @@ int main(void)
     // get_inputs();
     // Get Output Labels
     // int out[4] = {0,1,1,0};
-    // get_desired_outputs();
-    // train_neural_net();
-    // serialize();
+    get_desired_outputs();
+    train_neural_net();
+    serialize();
     test_nn();
 
     if (dinit() != SUCCESS_DINIT)
@@ -218,7 +218,7 @@ void feed_input(int i)
         // putchar('\n');
     }
     printf("\n");
-    printf("Input: %d\n", train_label[i]);
+    printf("Input: %i\n", (int)dataset_label[i] % 26);
 }
 
 void forward_prop_train(int current_training)
@@ -256,10 +256,10 @@ void forward_prop_train(int current_training)
     }*/
 
     printf("Result : %d\n", result);
-    if (result == desired_outputs[current_training])
+    /*if (result == desired_outputs[current_training])
     {
         success++;
-    }
+    }*/
 }
 
 char forward_prop_predict(int current_training)
@@ -297,7 +297,7 @@ char forward_prop_predict(int current_training)
         success++;
     }
 
-    letter = (char)(result + 64);
+    letter = (char)(result + 65);
 
     printf("Result : %d\n", result);
 
@@ -365,27 +365,13 @@ void calc_error(int i)
 {
     for (int j = 0; j < num_neurons[num_layers - 1]; j++)
     {
-        if (i % 5 == 0)
+        if (desired_outputs[i] % 26 == j)
         {
-            if (desired_outputs[i] == j)
-            {
-                errors[j] = lay[num_layers - 1].neu[j].actv - 1;
-            }
-            else
-            {
-                errors[j] = lay[num_layers - 1].neu[j].actv;
-            }
+            errors[j] = lay[num_layers - 1].neu[j].actv - 1;
         }
         else
         {
-            if (desired_outputs[i] + 9 == j)
-            {
-                errors[j] = lay[num_layers - 1].neu[j].actv - 1;
-            }
-            else
-            {
-                errors[j] = lay[num_layers - 1].neu[j].actv;
-            }
+            errors[j] = lay[num_layers - 1].neu[j].actv;
         }
     }
 }
@@ -399,7 +385,7 @@ void train_neural_net(void)
     // Gradient Descent
     for (it = 0; it < EPOCH; it++)
     {
-        success = 0;
+        // success = 0;
         for (i = 0; i < NUM_TRAINING_EX; i++)
         {
             feed_input(i);
@@ -497,7 +483,8 @@ void get_desired_outputs(void)
 
     for (i = 0; i < NUM_TRAINING_EX; i++)
     {
-        desired_outputs[i] = (float)train_label[i];
+        // desired_outputs[i] = (float)train_label[i];
+        desired_outputs[i] = dataset_label[i];
     }
 }
 
@@ -524,7 +511,7 @@ void test_nn(void)
 {
     int i;
     success = 0;
-    for (i = 0; i < 1; i++)
+    for (i = 0; i < NUM_TEST_EX; i++)
     {
         feed_input(i);
         // forward_prop_train(i);
@@ -538,7 +525,7 @@ void test_nn(void)
         forward_prop(j);
         j++;*/
     }
-    printf("Accuracy : %f\n", success / NUM_TRAINING_EX);
+    printf("Accuracy : %f\n", success / NUM_TEST_EX);
 }
 
 char predict(double *matrix)

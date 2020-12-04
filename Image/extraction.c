@@ -125,32 +125,33 @@ char extraction(SDL_Surface *image, int char_nb)
     memset(m1, 0, output_size * output_size * sizeof(double));
     m = fill_matrix(image, start, start + x, m);
     matrix_resize(m, height, x, m1); // And then we fill the matrix with 0 - 1
-
+    // printf("{");
     for (size_t i = 0; i < output_size; i++)
     {
         for (size_t j = 0; j < output_size; j++)
         {
-            if (i == output_size - 1 && i == j)
+            /*if (i == output_size - 1 && i == j)
             {
                 printf("%1.f ", m1[i * (output_size) + j]);
             }
             else
             {
                 printf("%1.f, ", m1[i * (output_size) + j]);
-            }
+            }*/
 
-            // printf("%ld   %ld", i, j);
-            // if ((j + 1) % x == 0) putchar('\n');
+            /*printf("%ld   %ld", i, j);
+            if ((j + 1) % x == 0)
+                putchar('\n');*/
         }
         if (i < output_size - 1)
         {
-            printf("\n");
+            // printf("\n");
         }
     }
-    printf("}");
-    // letter = predict(m1);
+    // printf("},");
+    letter = predict(m1);
 
-    letter = 'a';
+    // letter = 'a';
 
     free(m);
     free(m1);
