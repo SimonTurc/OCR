@@ -21,29 +21,67 @@
 int main()
 {
     SDL_Surface *image;
+    SDL_Surface *image_median;
+    SDL_Surface *image_gaussian;
+    
     SDL_Surface *image_rotate;
     SDL_Surface *line;
+    
     double angle = 0;
     int nb_lines = 0;
     int char_per_line = 0;
     unsigned int otsu_value = 0;
 
-    float gaussian_kernel[] = {0.0625, 0.125, 0.0625, 0.125, 0.25, 0.125, 0.0625, 0.125, 0.0625};
+    float gaussian_kernel[25] = {0.00390625, 0.015625, 0.0234375, 0.015625, 0.00390625,
+				 0.015625, 0.0625, 0.09375, 0.0625, 0.015625,
+				 0.0234375, 0.09375, 0.140625, 0.09375, 0.0234375,
+				 0.015625, 0.0625, 0.09375, 0.0625, 0.015625,
+				 0.00390625, 0.015625, 0.0234375, 0.015625, 0.00390625};
 
-    image = load_image("test_image/cp11.png");
-
+    image = load_image("test_image/11.png");
+    image_gaussian = load_image("test_image/11.png");
+    image_median = load_image("test_image/11.png");
+    
     init_sdl();
 
-    applying_filter(image, gaussian_kernel);
+    grayscale(image_median);
+    grayscale(image_gaussian);
+    grayscale(image);
+
+    
+    median_filter(image_median);
+
+    applying_filter(image_gaussian, gaussian_kernel);
 
     otsu_value = Otsu_Method(image);
     binarization(image, otsu_value);
+    binarization(image_median, otsu_value);
+    binarization(image_gaussian, otsu_value);
+    
+    compute_filters(image, image_gaussian, image_median);
 
-    angle = find_angle(image);
+    if (var_histo(image_median) > var_histo(image))
+    {
+	
+	angle = find_angle(image_median);
 
-    image_rotate = rotozoomSurface(image, angle, 1.0, 0);
-    replace_new_pixels(image_rotate);
+	image_rotate = rotozoomSurface(image_median, angle, 1.0, 0);
+	replace_new_pixels(image_rotate);
 
+	SDL_SaveBMP(image_rotate, "out.bmp");
+    }
+    else
+    {
+	
+	angle = find_angle(image);
+
+	image_rotate = rotozoomSurface(image, angle, 1.0, 0);
+	replace_new_pixels(image_rotate);
+
+	SDL_SaveBMP(image_rotate, "out.bmp");
+    }
+
+    
     horizontal_histogram(image_rotate);
 
     nb_lines = number_of_lines(image_rotate);
@@ -74,6 +112,10 @@ int main()
     // printf("};");
 
     SDL_FreeSurface(image);
+
+    SDL_FreeSurface(image_gaussian);
+
+    SDL_FreeSurface(image_median);
 
     SDL_FreeSurface(image_rotate);
 
