@@ -4,13 +4,13 @@
 #define MAX_LENGHT 20
 #define NUM_LAYERS 3
 #define NUM_NEURON_0 784
-#define NUM_NEURON_1 56
+#define NUM_NEURON_1 128
 //#define NUM_NEURON_2 16
-#define NUM_NEURON_3 26
+#define NUM_NEURON_3 52
 #define ALPHA 0.15
-#define NUM_TRAINING_EX 364
-#define NUM_TEST_EX 26
-#define EPOCH 300
+#define NUM_TRAINING_EX 572
+#define NUM_TEST_EX 52
+#define EPOCH 1
 #define Slope 1.0
 
 layer *lay = NULL;
@@ -218,7 +218,7 @@ void feed_input(int i)
         // putchar('\n');
     }
     printf("\n");
-    printf("Input: %i\n", (int)dataset_label[i] % 26);
+    printf("Input: %i\n", (int)dataset_label[i] % 52);
 }
 
 void forward_prop_train(int current_training)
@@ -249,17 +249,16 @@ void forward_prop_train(int current_training)
             result = i;
         }
     }
-    /*
-    if (current_training % 5 != 0)
-    {
-        result -= 9;
-    }*/
 
-    printf("Result : %d\n", result);
-    /*if (result == desired_outputs[current_training])
+    printf("Result : %d", result);
+    if (result == (int)desired_outputs[current_training] % 52)
     {
-        success++;
-    }*/
+        printf("\n");
+    }
+    else
+    {
+        printf(" XXX \n");
+    }
 }
 
 char forward_prop_predict(int current_training)
@@ -292,14 +291,23 @@ char forward_prop_predict(int current_training)
         }
     }
 
-    if (result == dataset_label[current_training])
+    if (result == (int)dataset_label[current_training] % 52)
     {
         success++;
+        printf("Result : %d \n", result);
     }
-
-    letter = (char)(result + 65);
-
-    printf("Result : %d\n", result);
+    else
+    {
+        printf("Result : %d   XXX\n", result);
+    }
+    if (result < 26)
+    {
+        letter = (char)(result + 65);
+    }
+    else
+    {
+        letter = (char)(result + 97 - 26);
+    }
 
     return letter;
 }
@@ -365,7 +373,7 @@ void calc_error(int i)
 {
     for (int j = 0; j < num_neurons[num_layers - 1]; j++)
     {
-        if (desired_outputs[i] % 26 == j)
+        if (desired_outputs[i] % 52 == j)
         {
             errors[j] = lay[num_layers - 1].neu[j].actv - 1;
         }
@@ -513,17 +521,16 @@ void test_nn(void)
     success = 0;
     for (i = 0; i < NUM_TEST_EX; i++)
     {
-        feed_input(i);
+        // feed_input(i);
         // forward_prop_train(i);
+        for (int j = 0; j < num_neurons[0]; j++)
+        {
+            lay[0].neu[j].actv = dataset_test[i][j];
+        }
+        printf("Input: %i\n", (int)dataset_label[i] % 52);
         char letter = forward_prop_predict(i);
         printf("%c\n", letter);
-        /*for (i = 0; i < num_neurons[0]; i++)
-        {
-            lay[0].neu[i].actv = train_image[j][i];
-        }
-        printf("Input: %i\n", train_label[j]);
-        forward_prop(j);
-        j++;*/
+        // forward_prop(j);
     }
     printf("Accuracy : %f\n", success / NUM_TEST_EX);
 }
