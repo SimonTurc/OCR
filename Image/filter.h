@@ -9,7 +9,7 @@ void median_filter(SDL_Surface* image);
 void adjust_border(SDL_Surface* image);
 void compute_filters(SDL_Surface* image,SDL_Surface* image_gaussian,SDL_Surface* image_median);
 double var_histo(SDL_Surface *image);
-int truncate(float value);
+int truncate1(float value);
 void contrast_adjustment(SDL_Surface* image, float contrast);
 
 #endif

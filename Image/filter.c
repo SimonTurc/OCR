@@ -396,9 +396,9 @@ void contrast_adjustment(SDL_Surface* image, float contrast)
 	    Uint8 r, g, b;
 	    SDL_GetRGB(pixel, image->format, &r, &g, &b);
 	    
-	    int new_r = truncate(factor * (r - 128) + 128);
-	    int new_g = truncate(factor * (g - 128) + 128);
-	    int new_b = truncate(factor * (b - 128) + 128);
+	    int new_r = truncate1(factor * (r - 128) + 128);
+	    int new_g = truncate1(factor * (g - 128) + 128);
+	    int new_b = truncate1(factor * (b - 128) + 128);
 	    
 	    pixel = SDL_MapRGB(image->format, new_r, new_g, new_b);
 	    put_pixel(image, i, j, pixel);
@@ -408,7 +408,7 @@ void contrast_adjustment(SDL_Surface* image, float contrast)
 						 
 }
 
-int truncate(float value)
+int truncate1(float value)
 {
     if (value >= 255.)
     {
