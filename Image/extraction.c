@@ -1,7 +1,10 @@
 #include "basics/pixel_operations.h"
+#include "datasetcreater.h"
 #include "matrix_resize.h"
 #include "prediction.h"
+
 #include <SDL.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -90,8 +93,6 @@ int get_length_col(SDL_Surface *image, int width, int col)
     return x;
 }
 
-
-
 double *fill_matrix(SDL_Surface *image, int start_col, int end_col, double *m)
 {
     int height = image->h;
@@ -112,9 +113,6 @@ double *fill_matrix(SDL_Surface *image, int start_col, int end_col, double *m)
     return m;
 }
 
-
-
-
 int count_space(SDL_Surface *image)
 {
     int width = image->w;
@@ -129,76 +127,60 @@ int count_space(SDL_Surface *image)
         Uint32 pixel = get_pixel(image, col, 0);
         Uint8 r, g, b;
         SDL_GetRGB(pixel, image->format, &r, &g, &b);
-	if(r == 1 || r == 255)
-	  NeverSeenChar = 1;
-        if (g == 127  && isGreen == 0 && NeverSeenChar == 1) 
+        if (r == 1 || r == 255)
+            NeverSeenChar = 1;
+        if (g == 127 && isGreen == 0 && NeverSeenChar == 1)
         {
-            isGreen = 1; 
+            isGreen = 1;
             bet_pix += 1;
         }
 
         if (isGreen == 1)
         {
-	  
+
             if (g == 1 || g == 255)
             {
                 isGreen = 0;
-		if(bet_pix > 7)
-		  nb_space += 1;
-		bet_pix = 0;    
+                if (bet_pix > 7)
+                    nb_space += 1;
+                bet_pix = 0;
             }
-	    bet_pix += 1;
+            bet_pix += 1;
         }
         col++;
     }
     return nb_space;
 }
 
-
-
-int addSpace(SDL_Surface *image,int char_nb)
+int addSpace(SDL_Surface *image, int char_nb)
 {
-  int width = image->w;
-  int col = matrix_col_extract(image, char_nb);
-  int InAChar = 1;
-  int bet_char = 0;
-  while(col < width)
+    int width = image->w;
+    int col = matrix_col_extract(image, char_nb);
+    int InAChar = 1;
+    int bet_char = 0;
+    while (col < width)
     {
-      Uint32 pixel = get_pixel(image, col, 0);
-      Uint8 r, g, b;
-      SDL_GetRGB(pixel, image->format, &r, &g, &b);
-      if(g == 127 && InAChar == 1)
-	{
-	  InAChar = 0;
-	  bet_char += 1;
-	}
-      if(InAChar == 0)
-	{
-	  if(g == 127)
-	    bet_char += 1;
-	  if((g == 255 || g == 1) && (bet_char > 5))
-	    return 1;
-	  if((g == 255 || g == 1) && (bet_char <= 5))
-	    return 0;
-	}
-      col += 1;
+        Uint32 pixel = get_pixel(image, col, 0);
+        Uint8 r, g, b;
+        SDL_GetRGB(pixel, image->format, &r, &g, &b);
+        if (g == 127 && InAChar == 1)
+        {
+            InAChar = 0;
+            bet_char += 1;
+        }
+        if (InAChar == 0)
+        {
+            if (g == 127)
+                bet_char += 1;
+            if ((g == 255 || g == 1) && (bet_char > 5))
+                return 1;
+            if ((g == 255 || g == 1) && (bet_char <= 5))
+                return 0;
+        }
+        col += 1;
     }
-  return 0;
+    return 0;
 }
-	    
-	    
-	    
-	
-	
-	  
-
-
-
-
-
-
-
-
 
 char extraction(SDL_Surface *image, int char_nb)
 {
@@ -240,7 +222,6 @@ char extraction(SDL_Surface *image, int char_nb)
     printf("}");
     */
     letter = predict(m1);
-    
 
     free(m);
     free(m1);
