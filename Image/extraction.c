@@ -90,6 +90,8 @@ int get_length_col(SDL_Surface *image, int width, int col)
     return x;
 }
 
+
+
 double *fill_matrix(SDL_Surface *image, int start_col, int end_col, double *m)
 {
     int height = image->h;
@@ -110,6 +112,85 @@ double *fill_matrix(SDL_Surface *image, int start_col, int end_col, double *m)
     return m;
 }
 
+/*int first_char(SDL_Surface *image)
+{
+  int width = image->w;
+  int first_wpixel = 0;
+  int x = 0;
+  while(first_wpixel == 0)
+    {
+      Uint32 pixel = get_pixel(image, x, 0);
+      Uint8 r, g, b;
+      SDL_GetRGB(pixel, image->format, &r, &g, &b);
+      if(r == 255)
+	{
+	  first_wpixel = x;
+	}
+      x++;
+    }
+  return first_wpixel;
+}
+      
+
+int print_espace(SDL_Surface *image)
+{
+  int width = image->w;
+  int nb_pixel_betlet = 0;
+  int first_char = first_char(image);
+  while*/
+
+
+int count_space(SDL_Surface *image)
+{
+    int width = image->w;
+    int isGreen = 0;
+    int NeverSeenChar = 0;
+    int col = 0;
+    int nb_space = 0;
+    int bet_pix = 0;
+
+    while (col < width)
+    {
+        Uint32 pixel = get_pixel(image, col, 0);
+        Uint8 r, g, b;
+        SDL_GetRGB(pixel, image->format, &r, &g, &b);
+	if(r == 1 || r == 255)
+	  NeverSeenChar = 1;
+        if (g == 127  && isGreen == 0 && NeverSeenChar == 1) 
+        {
+            isGreen = 1; 
+            bet_pix += 1;
+        }
+
+        if (isGreen == 1)
+        {
+	  
+            if (g == 1 || g == 255)
+            {
+                isGreen = 0;
+		if(bet_pix > 7)
+		  nb_space += 1;
+		bet_pix = 0;    
+            }
+	    bet_pix += 1;
+        }
+        col++;
+    }
+    return nb_space;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 char extraction(SDL_Surface *image, int char_nb)
 {
     char letter;
@@ -125,12 +206,11 @@ char extraction(SDL_Surface *image, int char_nb)
     memset(m1, 0, output_size * output_size * sizeof(double));
     m = fill_matrix(image, start, start + x, m);
     matrix_resize(m, height, x, m1); // And then we fill the matrix with 0 - 1
-    printf("{");
+    /*
     for (size_t i = 0; i < output_size; i++)
     {
         for (size_t j = 0; j < output_size; j++)
         {
-
             if (i == output_size - 1 && i == j)
             {
                 printf("%1.f ", m1[i * (output_size) + j]);
@@ -140,19 +220,18 @@ char extraction(SDL_Surface *image, int char_nb)
                 printf("%1.f, ", m1[i * (output_size) + j]);
             }
 
-            /*printf("%ld   %ld", i, j);
-            if ((j + 1) % x == 0)
-                putchar('\n');*/
+            // printf("%ld   %ld", i, j);
+            // if ((j + 1) % x == 0) putchar('\n');
         }
         if (i < output_size - 1)
         {
             printf("\n");
         }
     }
-    printf("},\n");
-    // letter = predict(m1);
-
-    letter = 'a';
+    printf("}");
+    */
+    letter = predict(m1);
+    
 
     free(m);
     free(m1);

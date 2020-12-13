@@ -18,6 +18,8 @@
 
 #include "Image/skew.h"
 
+#include "text.h"
+
 #define CONTRAST 150
 
 
@@ -33,11 +35,13 @@ int main()
     double angle = 0;
     int nb_lines = 0;
     int char_per_line = 0;
+    //int nb_space = 0;
     unsigned int otsu_value = 0;
 
-    image = load_image("test_image/test.jpg");
-    image_gaussian = load_image("test_image/test.jpg");
-    image_median = load_image("test_image/test.jpg");
+    struct text *result = newtext();
+    image = load_image("test_image/18.png");
+    image_gaussian = load_image("test_image/18.png");
+    image_median = load_image("test_image/18.png");
 
     contrast_adjustment(image, CONTRAST);
     contrast_adjustment(image_gaussian, CONTRAST);
@@ -82,7 +86,7 @@ int main()
 
     
     horizontal_histogram(image_rotate);
-
+  
     nb_lines = number_of_lines(image_rotate);
     char_per_line = 0;
     // int number = 0;
@@ -91,25 +95,41 @@ int main()
     for (int i = 1; i <= nb_lines; i++)
     {
         line = cut_image(image_rotate, i);
-
+	
         vertical_histogram(line);
-
+	SDL_SaveBMP(line, "out.bmp");
         char_per_line = count_char(line);
+	//nb_space = count_space(line);
         // printf("In line %i there are %i characters\n",i,char_per_line);
         // printf(" char per line :%i\n", char_per_line);
         for (int j = 1; j <= char_per_line; j++)
         {
-            // printf("%c", extraction(line, j));
-            extraction(line, j);
-            // printf(",\n");
-            // printf("%i,", number);
-            // number++;
+	  // printf("%c", extraction(line, j));
+	  text_push(result, extraction(line,j));
+	  // printf(",\n");
+	  // printf("%i,", number);
+	  // number++;
         }
-        printf("\n");
+	text_push(result,'\n');
+        //printf("\n");
         SDL_FreeSurface(line);
     }
     // printf("};");
 
+    if(result->size > 0)
+      {
+	for(size_t k = 0; k < result->size; k++)
+	  {
+	    printf("%c", result->data[k]);
+	  }
+      }
+
+
+
+
+
+    
+    
     SDL_FreeSurface(image);
 
     SDL_FreeSurface(image_gaussian);
@@ -117,6 +137,8 @@ int main()
     SDL_FreeSurface(image_median);
 
     SDL_FreeSurface(image_rotate);
+
+    freetext(result);
 
     return 0;
 }
