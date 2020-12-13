@@ -154,7 +154,7 @@ int get_text()
     // int number = 0;
     // printf("double dataset_train[61][784] = { \n");
     // printf("double dataset_test[52] = {");
-
+    
     output_file = fopen("output_text.txt", "a+");
     if (output_text == NULL){
       errx(1, "can't open output_file");
@@ -164,6 +164,10 @@ int get_text()
     for (int i = 1; i <= nb_lines; i++)
     {
         line = cut_image(image_rotate, i);
+	/*if (i == 1)
+	{
+	     SDL_SaveBMP(line, "out.bmp");
+	}*/
         vertical_histogram(line);
         char_per_line = count_char(line);
 	nb_char += char_per_line + 1;
