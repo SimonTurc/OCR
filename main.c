@@ -8,6 +8,7 @@
 #include <math.h>
 #include <ctype.h>
 #include <err.h>
+#include <string.h>
 
 #include <stdio.h>
 #include "SDL/SDL.h"
@@ -20,6 +21,8 @@
 #include "Image/matrix_resize.h"
 #include "Image/skew.h"
 #include "text.h"
+#include "get_text.h"
+
 #define CONTRAST 150
 #define PATH_SIZE 256
 
@@ -33,8 +36,6 @@ GtkWidget *input_file;
 GtkBuilder *builder;
 
 int is_image_loaded = 0;
-
-void get_text();
 
 void on_input_file_file_set(GtkFileChooserButton *f){
   gtk_label_set_text (GTK_LABEL(output_text), (const gchar*) "");
@@ -59,9 +60,22 @@ void on_input_file_file_set(GtkFileChooserButton *f){
 void on_run_button_clicked(){
   if(image1 && is_image_loaded){
     gtk_container_remove(GTK_CONTAINER(fixed), image1);
-    get_text();
-    //char text[] = "Là c'est censé afficher le texte mais on a pas fini le programme zebi";
-    //gtk_label_set_text (GTK_LABEL(output_text), (const gchar*) text);
+    int text_size = get_text();
+    char text[text_size];
+    char textline[text_size];
+    FILE* output_file = fopen("output_text.txt", "r");
+    if (output_text == NULL){
+      errx(1, "can't open output_file");
+    }
+    int i = 0;
+    while(fgets(textline, text_size, output_file) != NULL){
+      if (i!=0){
+	strcat(text, textline);
+      }
+      i++;
+    }
+    fclose(output_file);
+    gtk_label_set_text (GTK_LABEL(output_text), (const gchar*) text);
     is_image_loaded = 0;
   }
   if(!image1){
@@ -69,7 +83,7 @@ void on_run_button_clicked(){
   }
 }
 
-void get_text()
+int get_text()
 {
     SDL_Surface *image;
     SDL_Surface *image_median;
@@ -92,7 +106,9 @@ void get_text()
     char filename[PATH_SIZE] = "";
     fgets(filename, PATH_SIZE, output_file);
     fclose(output_file);
-
+    
+    int nb_char = strlen(filename) + 2;
+    
     image = load_image(filename);
     image_gaussian = load_image(filename);
     image_median = load_image(filename);
@@ -147,6 +163,7 @@ void get_text()
         line = cut_image(image_rotate, i);
         vertical_histogram(line);
         char_per_line = count_char(line);
+	nb_char += char_per_line + 1;
 	//nb_space = count_space(line);
         // printf("In line %i there are %i characters\n",i,char_per_line);
         // printf(" char per line :%i\n", char_per_line);
@@ -168,7 +185,7 @@ void get_text()
     SDL_FreeSurface(image_gaussian);
     SDL_FreeSurface(image_median);
     SDL_FreeSurface(image_rotate);
-    return;
+    return nb_char;
 }
 
 

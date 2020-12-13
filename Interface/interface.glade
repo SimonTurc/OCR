@@ -54,30 +54,6 @@
             <property name="y">10</property>
           </packing>
         </child>
-        <child>
-          <object class="GtkScrolledWindow" id="ScrollWindow">
-            <property name="width-request">1280</property>
-            <property name="height-request">650</property>
-            <property name="visible">True</property>
-            <property name="can-focus">True</property>
-            <property name="shadow-type">in</property>
-            <child>
-              <object class="GtkViewport" id="ViewPort">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <child>
-                  <object class="GtkTextView" id="TextView">
-                    <property name="visible">True</property>
-                    <property name="can-focus">True</property>
-                  </object>
-                </child>
-              </object>
-            </child>
-          </object>
-          <packing>
-            <property name="y">70</property>
-          </packing>
-        </child>
       </object>
     </child>
   </object>
