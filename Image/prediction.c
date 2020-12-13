@@ -13,8 +13,6 @@ int init(int num_layers, int *num_neurons)
         printf("Error in creating architecture...\n");
         return ERR_INIT;
     }
-
-    // printf("Neural Network Created Successfully...\n\n");
     return SUCCESS_INIT;
 }
 
@@ -27,9 +25,6 @@ int create_architecture(int num_layers, int *num_neurons)
     {
         lay[i] = create_layer(num_neurons[i]);
         lay[i].num_neu = num_neurons[i];
-        // printf("Created Layer: %d\n", i + 1);
-        // printf("Number of Neurons in Layer %d: %d\n", i, lay[i].num_neu);
-
         for (int j = 0; j < num_neurons[i]; j++)
         {
             if (i < num_layers - 1)
@@ -37,10 +32,7 @@ int create_architecture(int num_layers, int *num_neurons)
                 lay[i].neu[j] = create_neuron(num_neurons[i + 1]);
             }
         }
-        // printf("\n");
     }
-
-    // printf("\n");
 
     return SUCCESS_CREATE_ARCHITECTURE;
 }
@@ -69,7 +61,6 @@ char deserialize(double *matrix)
             exit(-1);
         }
         num_neurons[i] = atoi(str);
-        // printf("%d \n", num_neurons[i]);
     }
     init(num_layers, num_neurons);
     for (int i = 0; i < num_layers; i++)
@@ -92,12 +83,10 @@ char deserialize(double *matrix)
                         exit(-1);
                     }
                     lay[i].neu[j].out_weights[k] = atof(str);
-                    // printf("weight[%li][%li][%li] : %f\n", i, j, k, lay[i].neu[j].out_weights[k]);
                 }
             }
         }
     }
-    // printf("A neural network has been successfully created\n");
     fclose(file);
     for (int i = 0; i < num_neurons[0]; i++)
     {
@@ -126,7 +115,6 @@ char forward_prop_predict(int num_layers, int *num_neurons)
             double output = sigmoid(sum);
             lay[i].neu[j].actv = output;
             lay[i].neu[j].grad = sigmoidDerivative(lay[i].neu[j].actv);
-            // printf("Output[%i][%i]: %f\n", i, j, lay[i].neu[j].actv);
         }
     }
     for (int i = 0; i < num_neurons[num_layers - 1]; i++)
@@ -137,7 +125,30 @@ char forward_prop_predict(int num_layers, int *num_neurons)
             result = i;
         }
     }
-    letter = (char)(result + 65);
+    if (result < 26)
+    {
+        letter = (char)(result + 65);
+    }
+    else if (result < 52)
+    {
+        letter = (char)(result + 97 - 26);
+    }
+    else if (result < 53)
+    {
+        letter = (char)(result + 33 - 52);
+    }
+    else if (result < 66)
+    {
+        letter = (char)(result + 34 - 52);
+    }
+    else if (result < 73)
+    {
+        letter = (char)(result + 58 - 66);
+    }
+    else
+    {
+        letter = (char)(result + 48 - 73);
+    }
     return letter;
 }
 
