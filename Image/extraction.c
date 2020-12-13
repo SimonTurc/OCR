@@ -112,32 +112,7 @@ double *fill_matrix(SDL_Surface *image, int start_col, int end_col, double *m)
     return m;
 }
 
-/*int first_char(SDL_Surface *image)
-{
-  int width = image->w;
-  int first_wpixel = 0;
-  int x = 0;
-  while(first_wpixel == 0)
-    {
-      Uint32 pixel = get_pixel(image, x, 0);
-      Uint8 r, g, b;
-      SDL_GetRGB(pixel, image->format, &r, &g, &b);
-      if(r == 255)
-	{
-	  first_wpixel = x;
-	}
-      x++;
-    }
-  return first_wpixel;
-}
-      
 
-int print_espace(SDL_Surface *image)
-{
-  int width = image->w;
-  int nb_pixel_betlet = 0;
-  int first_char = first_char(image);
-  while*/
 
 
 int count_space(SDL_Surface *image)
@@ -181,7 +156,41 @@ int count_space(SDL_Surface *image)
 
 
 
-
+int addSpace(SDL_Surface *image,int char_nb)
+{
+  int width = image->w;
+  int col = matrix_col_extract(image, char_nb);
+  int InAChar = 1;
+  int bet_char = 0;
+  while(col < width)
+    {
+      Uint32 pixel = get_pixel(image, col, 0);
+      Uint8 r, g, b;
+      SDL_GetRGB(pixel, image->format, &r, &g, &b);
+      if(g == 127 && InAChar == 1)
+	{
+	  InAChar = 0;
+	  bet_char += 1;
+	}
+      if(InAChar == 0)
+	{
+	  if(g == 127)
+	    bet_char += 1;
+	  if((g == 255 || g == 1) && (bet_char > 5))
+	    return 1;
+	  if((g == 255 || g == 1) && (bet_char <= 5))
+	    return 0;
+	}
+      col += 1;
+    }
+  return 0;
+}
+	    
+	    
+	    
+	
+	
+	  
 
 
 
