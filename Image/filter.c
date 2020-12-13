@@ -387,7 +387,6 @@ void contrast_adjustment(SDL_Surface* image, float contrast)
     int width = image -> w;
     int height = image -> h;
     float factor = (259. * (contrast + 255.)) / (255. * (259. - contrast));
-    printf("factor : %f", factor);
     
     for(int i = 0; i < width; i++)
     {

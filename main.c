@@ -22,8 +22,7 @@
 
 #define CONTRAST 150
 
-
-int main()
+struct text* get_text(char* filename)
 {
     SDL_Surface *image;
     SDL_Surface *image_median;
@@ -39,9 +38,9 @@ int main()
     unsigned int otsu_value = 0;
 
     struct text *result = newtext();
-    image = load_image("test_image/18.png");
-    image_gaussian = load_image("test_image/18.png");
-    image_median = load_image("test_image/18.png");
+    image = load_image(filename);
+    image_gaussian = load_image(filename);
+    image_median = load_image(filename);
 
     contrast_adjustment(image, CONTRAST);
     contrast_adjustment(image_gaussian, CONTRAST);
@@ -97,7 +96,6 @@ int main()
         line = cut_image(image_rotate, i);
 	
         vertical_histogram(line);
-	SDL_SaveBMP(line, "out.bmp");
         char_per_line = count_char(line);
 	//nb_space = count_space(line);
         // printf("In line %i there are %i characters\n",i,char_per_line);
@@ -116,20 +114,6 @@ int main()
     }
     // printf("};");
 
-    if(result->size > 0)
-      {
-	for(size_t k = 0; k < result->size; k++)
-	  {
-	    printf("%c", result->data[k]);
-	  }
-      }
-
-
-
-
-
-    
-    
     SDL_FreeSurface(image);
 
     SDL_FreeSurface(image_gaussian);
@@ -138,7 +122,19 @@ int main()
 
     SDL_FreeSurface(image_rotate);
 
-    freetext(result);
+    return result;
+}
 
-    return 0;
+
+int main(){
+  char* filename = "test_image/18.png";
+  struct text *result = get_text(filename);
+  if(result->size > 0)
+      {
+	for(size_t k = 0; k < result->size; k++)
+	  {
+	    printf("%c", result->data[k]);
+	  }
+      }
+  freetext(result);
 }

@@ -1,23 +1,24 @@
-# Simple SDL mini Makefile
+#MAKEFILE
+CC =gcc -fsanitize=address
+CPPFLAGS = `pkg-config --cflags sdl` -MMD
+CFLAGS = -Wall -Wextra -Werror -std=c99 -O3
+LDFLAGS = -pthread -lpthread
+LDLIBS = `pkg-config --libs sdl` -lSDL_image -lSDL_gfx
 
-CC=gcc -fsanitize=address
+SRC = Image/basics/pixel_operations.c  Image/basics/sdl_basics.c Image/filter.c Image/segmentation.c Image/extraction.c Image/matrix_resize.c Image/skew.c Image/prediction.c text.c
 
-CPPFLAGS= `pkg-config --cflags sdl` -MMD
-CFLAGS= -Wall -Wextra -Werror -std=c99 -O3
-LDFLAGS= -pthread -lpthread
-LDLIBS= `pkg-config --libs sdl` -lSDL_image -lSDL_gfx
+OBJ = ${SRC:.c=.o}
+DEP = ${SRC:.c=.d}
 
 all: main
 
-main: Image/basics/pixel_operations.o  Image/basics/sdl_basics.o Image/filter.o Image/segmentation.o Image/extraction.o Image/matrix_resize.o Image/skew.o Image/prediction.o -lm
+main: ${OBJ} -lm
+
+.PHONY: clean
 
 clean:
-	${RM} *.o
-	${RM} Image/*.o
-	${RM} Image/*.d
-	${RM} Neural_network/*.o
-	${RM} Neural_network/*.d
-	${RM} *.d
-	${RM} main
+	${RM} ${OBJ}   # remove object files
+	${RM} ${DEP}   # remove dependency files
+	${RM} main     # remove main program
 
-# END
+-include ${DEP}
