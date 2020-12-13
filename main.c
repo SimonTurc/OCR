@@ -18,6 +18,9 @@
 
 #include "Image/skew.h"
 
+#define CONTRAST 150
+
+
 int main()
 {
     SDL_Surface *image;
@@ -32,26 +35,23 @@ int main()
     int char_per_line = 0;
     unsigned int otsu_value = 0;
 
-    float gaussian_kernel[25] = {0.00390625, 0.015625, 0.0234375, 0.015625, 0.00390625,
-				 0.015625, 0.0625, 0.09375, 0.0625, 0.015625,
-				 0.0234375, 0.09375, 0.140625, 0.09375, 0.0234375,
-				 0.015625, 0.0625, 0.09375, 0.0625, 0.015625,
-				 0.00390625, 0.015625, 0.0234375, 0.015625, 0.00390625};
+    image = load_image("test_image/test.jpg");
+    image_gaussian = load_image("test_image/test.jpg");
+    image_median = load_image("test_image/test.jpg");
 
-    image = load_image("test_image/11.png");
-    image_gaussian = load_image("test_image/11.png");
-    image_median = load_image("test_image/11.png");
+    contrast_adjustment(image, CONTRAST);
+    contrast_adjustment(image_gaussian, CONTRAST);
+    contrast_adjustment(image_median, CONTRAST);
     
     init_sdl();
 
     grayscale(image_median);
     grayscale(image_gaussian);
     grayscale(image);
-
     
     median_filter(image_median);
 
-    applying_filter(image_gaussian, gaussian_kernel);
+    applying_filter(image_gaussian);
 
     otsu_value = Otsu_Method(image);
     binarization(image, otsu_value);
@@ -59,6 +59,7 @@ int main()
     binarization(image_gaussian, otsu_value);
     
     compute_filters(image, image_gaussian, image_median);
+
 
     if (var_histo(image_median) > var_histo(image))
     {
@@ -68,7 +69,6 @@ int main()
 	image_rotate = rotozoomSurface(image_median, angle, 1.0, 0);
 	replace_new_pixels(image_rotate);
 
-	SDL_SaveBMP(image_rotate, "out.bmp");
     }
     else
     {
@@ -78,7 +78,6 @@ int main()
 	image_rotate = rotozoomSurface(image, angle, 1.0, 0);
 	replace_new_pixels(image_rotate);
 
-	SDL_SaveBMP(image_rotate, "out.bmp");
     }
 
     

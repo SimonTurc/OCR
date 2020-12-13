@@ -174,7 +174,6 @@ void array_select_sort(unsigned int array[], size_t len)
 void median_filter(SDL_Surface* image)
 {
 
-    
     int width = image -> w;
     int height = image -> h;
     int pixel_x = 0;
@@ -302,11 +301,17 @@ void compute_filters(SDL_Surface* image,SDL_Surface* image_gaussian,SDL_Surface*
 }
 
 /*
- * Fonction qui applique un noyau
+ * Fonction qui applique un filtre gaussien
  */
 
-void applying_filter(SDL_Surface* image, float kernel[])
+void applying_filter(SDL_Surface* image)
 {
+    float kernel[25] = {0.00390625, 0.015625, 0.0234375, 0.015625, 0.00390625,
+				 0.015625, 0.0625, 0.09375, 0.0625, 0.015625,
+				 0.0234375, 0.09375, 0.140625, 0.09375, 0.0234375,
+				 0.015625, 0.0625, 0.09375, 0.0625, 0.015625,
+				 0.00390625, 0.015625, 0.0234375, 0.015625, 0.00390625};
+    
     int width = image -> w;
     int height = image -> h;
     int pixel_x = 0;
@@ -375,4 +380,47 @@ double var_histo(SDL_Surface *image)
     Var = s2/height - M * M;
 
     return Var;
+}
+
+void contrast_adjustment(SDL_Surface* image, float contrast)
+{
+    int width = image -> w;
+    int height = image -> h;
+    float factor = (259. * (contrast + 255.)) / (255. * (259. - contrast));
+    printf("factor : %f", factor);
+    
+    for(int i = 0; i < width; i++)
+    {
+	for(int j = 0; j < height; j++)
+	{
+	    Uint32 pixel = get_pixel(image, i, j);
+	    Uint8 r, g, b;
+	    SDL_GetRGB(pixel, image->format, &r, &g, &b);
+	    
+	    int new_r = truncate(factor * (r - 128) + 128);
+	    int new_g = truncate(factor * (g - 128) + 128);
+	    int new_b = truncate(factor * (b - 128) + 128);
+	    
+	    pixel = SDL_MapRGB(image->format, new_r, new_g, new_b);
+	    put_pixel(image, i, j, pixel);
+	    
+	}
+    }
+						 
+}
+
+int truncate(float value)
+{
+    if (value >= 255.)
+    {
+	return 255;
+    }
+    else if (value <= 0.)
+    {
+	return 0;
+    }
+    else
+    {
+	return value;
+    }
 }
