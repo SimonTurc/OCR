@@ -36,7 +36,7 @@ void horizontal_histogram(SDL_Surface* image){
     //Trace des lignes horizontale en rouge
     for(int y = 0; y < height; y++)
     {
-	if (histo[y] < 2)
+	if (histo[y] < 1)
 	{
 	    for(int x = 0; x < width; x++)
 	    {
@@ -123,7 +123,9 @@ SDL_Surface* cut_image(SDL_Surface* image, int nb_image)
 	     if(number == nb_image)
 	     {
 		 free(line);
-		 return line = cut_lines(image,first,last);	 
+		 line = cut_lines(image,first,last);
+		 if (last-first <= 0 || line != NULL)
+		     return line;	 
 	     }
 	     number++;
 	  
