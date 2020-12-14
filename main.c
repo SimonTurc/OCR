@@ -95,7 +95,7 @@ int get_text()
     double angle = 0;
     int nb_lines = 0;
     int char_per_line = 0;
-    //int nb_space = 0;
+    int nb_space = 0;
     unsigned int otsu_value = 0;
 
     
@@ -170,13 +170,18 @@ int get_text()
 	}*/
         vertical_histogram(line);
         char_per_line = count_char(line);
-	nb_char += char_per_line + 1;
-	//nb_space = count_space(line);
+	nb_space = count_space(line);
+	nb_char += char_per_line + 1 + nb_space;
+
         // printf("In line %i there are %i characters\n",i,char_per_line);
         // printf(" char per line :%i\n", char_per_line);
         for (int j = 1; j <= char_per_line; j++)
         {
 	  fputc((int) extraction(line, j), output_file);
+	  if(addSpace(line,j) == 1)
+	    
+	    fputc(32, output_file);
+	    
 	  // printf("%c", extraction(line, j));
 	  // printf(",\n");
 	  // printf("%i,", number);
