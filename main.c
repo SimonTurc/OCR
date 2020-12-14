@@ -130,11 +130,13 @@ int get_text()
 
     applying_filter(image_gaussian);
 
+    thickness(image);
+
     otsu_value = Otsu_Method(image);
     binarization(image, otsu_value);
     binarization(image_median, otsu_value);
     binarization(image_gaussian, otsu_value);
-    
+
     compute_filters(image, image_gaussian, image_median);
     if (var_histo(image_median) > var_histo(image))
     {
@@ -149,6 +151,7 @@ int get_text()
 	replace_new_pixels(image_rotate);
     }
     horizontal_histogram(image_rotate);
+    
     nb_lines = number_of_lines(image_rotate);
     char_per_line = 0;
     // int number = 0;
@@ -178,8 +181,8 @@ int get_text()
         for (int j = 1; j <= char_per_line; j++)
         {
 	  fputc((int) extraction(line, j), output_file);
+	  
 	  if(addSpace(line,j) == 1)
-	    
 	    fputc(32, output_file);
 	    
 	  // printf("%c", extraction(line, j));

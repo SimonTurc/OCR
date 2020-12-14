@@ -11,5 +11,6 @@ void compute_filters(SDL_Surface* image,SDL_Surface* image_gaussian,SDL_Surface*
 double var_histo(SDL_Surface *image);
 int truncate1(float value);
 void contrast_adjustment(SDL_Surface* image, float contrast);
+void thickness(SDL_Surface* image);
 
 #endif

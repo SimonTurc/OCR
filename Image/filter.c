@@ -324,7 +324,7 @@ void applying_filter(SDL_Surface* image)
 	for(int j = offset; j < height - offset; j++)
 	{
 	    Uint32 pixel = get_pixel(image, i, j);
-	    unsigned int  acc[5] = {0 , 0 , 0};
+	    unsigned int  acc[3] = {0 , 0 , 0};
 	    for(int x = 0; x < 5; x++)
 	    {
 		for(int y = 0; y < 5; y++)
@@ -349,6 +349,57 @@ void applying_filter(SDL_Surface* image)
 
     adjust_border(image);
 }
+
+void thickness(SDL_Surface* image)
+{
+    //float kernel[9] = {0.0625, 0.125, 0.0625,0.125, 0.25, 0.125,0.0625, 0.125, 0.0625};
+
+    float kernel[9] = {0.05,  0.15, 0.05,
+		       0.15 , 0.20, 0.15,
+		       0.05 , 0.15, 0.05};
+    
+    int width = image -> w;
+    int height = image -> h;
+    int pixel_x = 0;
+    int pixel_y = 0;
+	
+    int offset = 3 / 2;
+    
+    for(int i = offset; i < width - offset ; i++)
+    {
+	for(int j = offset; j < height - offset; j++)
+	{
+	    Uint32 pixel = get_pixel(image, i, j);
+	    unsigned int  acc[3] = {0 , 0 , 0};
+	    for(int x = 0; x < 3; x++)
+	    {
+		for(int y = 0; y < 3; y++)
+		{
+		    pixel_x = i + x - offset;
+		    pixel_y = j + y - offset;
+
+		     Uint32 pixel2 = get_pixel(image, pixel_x, pixel_y);
+		     Uint8 r, g, b;
+		     SDL_GetRGB(pixel2, image->format, &r, &g, &b);
+
+		     acc[0] += r * kernel[x * 3 + y];
+		     acc[1] += g * kernel[x * 3 + y];
+		     acc[2] += b * kernel[x * 3 + y];
+		}
+	    }
+
+	    if (acc[0] < 127 && acc[1] < 127 && acc[2])
+	    {
+		pixel = SDL_MapRGB(image->format, acc[0], acc[1], acc[2]);
+		put_pixel(image, i, j, pixel);
+	    }
+	    
+	}
+    }
+
+    adjust_border(image);
+}
+
 
 double var_histo(SDL_Surface *image)
 {
