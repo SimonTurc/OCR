@@ -21,6 +21,7 @@
 
 int init(void);
 int dinit(void);
+int dinit_exist(int num_layers, int *num_neurons);
 
 int create_architecture(void);
 int initialize_weights(void);
@@ -36,6 +37,15 @@ void get_desired_outputs(void);
 void test_nn(void);
 char predict(double *matrix);
 void serialize(void);
+int init_exist(int num_layers, int *num_neurons);
+int create_architecture_exist(int num_layers, int *num_neurons);
+void feed_input_exist(int i, int *num_neurons);
+void forward_prop_train_exist(int current_training, int num_layers, int *num_neurons);
+char forward_prop_predict_exist(int current_training, int num_layers, int *num_neurons);
+void back_prop_exist(int num_layers, int *num_neurons);
+void calc_error_exist(int i, int num_layers, int *num_neurons);
+void train_neural_net_exist(int num_layers ,int *num_neurons);
+void test_nn_exist(int num_layers,int *num_neurons);
 void deserialize(char *bot);
 void Normalize_flip_matrix(int num_train_actual, double **flip_matrix);
 void calc_error(int i);

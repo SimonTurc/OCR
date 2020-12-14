@@ -39,7 +39,7 @@ int create_architecture(int num_layers, int *num_neurons)
 
 char deserialize(double *matrix)
 {
-    FILE *file = fopen("Image/bot.txt", "r");
+    FILE *file = fopen("bot.txt", "r");
     if (file == NULL)
     {
         printf("couldn't open file ...\n");

@@ -14,12 +14,25 @@ all: main
 
 main: ${OBJ} -lm
 
+backprop.o: Neural_network/Neural_Network.c
+	$(CC) $(CFLAGS) -c Neural_network/Neural_Network.c
+
+layer.o: Neural_network/layer.c
+	$(CC) $(CFLAGS) -c Neural_network/layer.c
+
+neuron.o: Neural_network/neuron.c
+	$(CC) $(CFLAGS) -c Neural_network/neuron.c
+
+backprop: backprop.o layer.o neuron.o
+	$(CC) $(LDFLAGS) -o main Neural_Network.o layer.o neuron.o -lm
+
 .PHONY: clean
 
 clean:
 	${RM} ${OBJ}   # remove object files
 	${RM} ${DEP}   # remove dependency files
 	${RM} main     # remove main program
-	${RM} main.d     # remove main program
+	${RM} main.d   # remove main program
+	${RM} *.o
 
 -include ${DEP}
