@@ -1,7 +1,6 @@
 #include "backprop.h"
 // #include "dataset.h"
 #include "datasetbis.h"
-#include <err.h>
 
 #define MAX_LENGHT 20
 #define NUM_LAYERS 3
@@ -11,7 +10,7 @@
 #define ALPHA 0.15
 #define NUM_TRAINING_EX 29 * 83
 #define NUM_TEST_EX 83
-#define EPOCH 150
+#define EPOCH 1
 #define Slope 1.0
 
 layer *lay = NULL;
@@ -534,6 +533,8 @@ void deserialize(char *bot)
                 exit(-1);
             }
             lay[i].neu[j].bias = atof(str);
+            printf("string bias %s\n", str);
+            printf("double bias %f\n", atof(str));
             if (i < num_layers - 1)
             {
                 for (int k = 0; k < num_neurons[i + 1]; k++)
@@ -550,7 +551,6 @@ void deserialize(char *bot)
     }
     printf("A neural network has been successfully created\n");
     fclose(file);
-    printf("%i\n", num_neurons[0]);
     input = (double **)malloc(NUM_TRAINING_EX * sizeof(double *));
     for (int i = 0; i < NUM_TRAINING_EX; i++)
     {
@@ -563,7 +563,7 @@ void deserialize(char *bot)
     memset(errors, 0, num_neurons[num_layers - 1] * sizeof(float));
 
     get_desired_outputs();
-    train_neural_net_exist(num_layers, num_neurons);
+    // train_neural_net_exist(num_layers, num_neurons);
     test_nn_exist(num_layers, num_neurons);
     char answer2;
     printf("Do you want to serialize [y/n] : ");

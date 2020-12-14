@@ -17,7 +17,7 @@
 #define SUCCESS_CREATE_ARCHITECTURE 0
 #define ERR_CREATE_ARCHITECTURE 1
 
-#define MAX_LENGHT 50
+#define MAX_LENGHT 20
 
 char forward_prop_predict(int num_layers, int *num_neurons);
 char predict(double *matrix);

@@ -37,6 +37,32 @@ int create_architecture(int num_layers, int *num_neurons)
     return SUCCESS_CREATE_ARCHITECTURE;
 }
 
+double convert_double(const char *s)
+{
+    double rez = 0, fact = 1;
+    if (*s == '-')
+    {
+        s++;
+        fact = -1;
+    };
+    for (int point_seen = 0; *s; s++)
+    {
+        if (*s == '.')
+        {
+            point_seen = 1;
+            continue;
+        };
+        int d = *s - '0';
+        if (d >= 0 && d <= 9)
+        {
+            if (point_seen)
+                fact /= 10.0f;
+            rez = rez * 10.0f + (double)d;
+        };
+    };
+    return rez * fact;
+};
+
 char deserialize(double *matrix)
 {
     FILE *file = fopen("bot.txt", "r");
@@ -63,6 +89,7 @@ char deserialize(double *matrix)
         num_neurons[i] = atoi(str);
     }
     init(num_layers, num_neurons);
+    // printf("weight[%i][%i][%i] : %f\n", i, j, k, lay[i].neu[j].out_weights[k]);
     for (int i = 0; i < num_layers; i++)
     {
         for (int j = 0; j < num_neurons[i]; j++)
@@ -72,7 +99,7 @@ char deserialize(double *matrix)
                 printf("Lost 3 ...\n");
                 exit(-1);
             }
-            lay[i].neu[j].bias = atof(str);
+            lay[i].neu[j].bias = convert_double(str);
             if (i < num_layers - 1)
             {
                 for (int k = 0; k < num_neurons[i + 1]; k++)
@@ -82,7 +109,7 @@ char deserialize(double *matrix)
                         printf("Lost 4 ...\n");
                         exit(-1);
                     }
-                    lay[i].neu[j].out_weights[k] = atof(str);
+                    lay[i].neu[j].out_weights[k] = convert_double(str);
                 }
             }
         }
@@ -154,6 +181,7 @@ char forward_prop_predict(int num_layers, int *num_neurons)
 
 char predict(double *matrix)
 {
+
     char charcter = deserialize(matrix);
     return charcter;
 }

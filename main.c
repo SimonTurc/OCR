@@ -1,4 +1,4 @@
-#include <stdlib.h>
+#include <stdio.h>
 #include <sys/types.h>
 #include <signal.h>
 #include <unistd.h>
@@ -8,9 +8,8 @@
 #include <math.h>
 #include <ctype.h>
 #include <err.h>
-#include <string.h>
+#include <stdlib.h>
 
-#include <stdio.h>
 #include "SDL/SDL.h"
 #include "SDL/SDL_image.h"
 #include "SDL/SDL_rotozoom.h"
@@ -129,7 +128,7 @@ int get_text()
 
     thickness(image);
 
-    otsu_value = Otsu_Method(image);
+    otsu_value = Otsu_Method(image) +30;
     binarization(image, otsu_value);
     binarization(image_median, otsu_value);
     binarization(image_gaussian, otsu_value);
