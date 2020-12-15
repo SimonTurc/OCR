@@ -170,9 +170,17 @@ int get_text()
       image_rotate = rotozoomSurface(image, angle, 1.0, 0);
       replace_new_pixels(image_rotate);
     }
-    
-    horizontal_histogram(image_rotate);
-    nb_lines = number_of_lines(image_rotate);
+
+    if(image->w < 30)
+    {
+	horizontal_histogram(image);
+	nb_lines = number_of_lines(image);
+    }
+    else
+    {
+	horizontal_histogram(image_rotate);
+	nb_lines = number_of_lines(image_rotate);
+    }
     
     output_file = fopen("output_text.txt", "a+");
     if (output_text == NULL){
@@ -182,11 +190,15 @@ int get_text()
     
     for (int i = 1; i <= nb_lines; i++)
     {
-      line = cut_image(image_rotate, i);
-      /*if (i == 1)
-      {
-            SDL_SaveBMP(line, "out.bmp");
-      }*/
+	if(image->w < 30)
+	{
+	    line = cut_image(image, i);
+	}
+	else
+	{
+	    line = cut_image(image_rotate, i);
+	}
+	
       vertical_histogram(line);
       if(line->h != 0 || line->w != 0)
       {
