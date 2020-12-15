@@ -195,7 +195,7 @@ char extraction(SDL_Surface *image, int char_nb)
     memset(m1, 0, output_size * output_size * sizeof(double));
     m = fill_matrix(image, start, start + x, m);
     matrix_resize(m, height, x, m1); // And then we fill the matrix with 0 - 1
-    createdataset(m1);
+    // createdataset(m1);
     letter = predict(m1);
 
     free(m);

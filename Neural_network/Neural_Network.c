@@ -8,9 +8,9 @@
 #define NUM_NEURON_1 148
 #define NUM_NEURON_3 83
 #define ALPHA 0.15
-#define NUM_TRAINING_EX 29 * 83
+#define NUM_TRAINING_EX 50 * 83
 #define NUM_TEST_EX 83
-#define EPOCH 1
+#define EPOCH 250
 #define Slope 1.0
 
 layer *lay = NULL;
