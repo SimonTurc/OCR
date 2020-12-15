@@ -1,5 +1,4 @@
 #include "backprop.h"
-// #include "dataset.h"
 #include "datasetbis.h"
 
 #define MAX_LENGHT 20
