@@ -32,6 +32,7 @@ GtkWidget *run_button;
 GtkWidget *output_text;
 GtkWidget *image1;
 GtkWidget *input_file;
+GtkWidget *toggle_button;
 GtkBuilder *builder;
 
 int is_image_loaded = 0;
@@ -126,8 +127,10 @@ int get_text()
     median_filter(image_median);
     applying_filter(image_gaussian);
 
-    thickness(image);
-
+    if (gtk_toggle_button_get_active ((GtkToggleButton*)toggle_button)){
+      thickness(image);
+      printf("\n\nlagrossemoula\n\n");
+    }
     otsu_value = Otsu_Method(image) +30;
     binarization(image, otsu_value);
     binarization(image_median, otsu_value);
@@ -199,6 +202,7 @@ int main(int argc, char *argv[]){
   input_file = GTK_WIDGET(gtk_builder_get_object(builder, "input_file"));
   run_button = GTK_WIDGET(gtk_builder_get_object(builder, "run_button"));
   output_text = GTK_WIDGET(gtk_builder_get_object(builder, "output_text"));
+  toggle_button = GTK_WIDGET(gtk_builder_get_object(builder, "toggle_button"));
 
   gtk_widget_show(window);
   gtk_main();

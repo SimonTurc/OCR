@@ -54,6 +54,20 @@
             <property name="y">10</property>
           </packing>
         </child>
+        <child>
+          <object class="GtkCheckButton" id="toggle_button">
+            <property name="label" translatable="yes">Thickness
+(recommended for light font)</property>
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">False</property>
+            <property name="draw-indicator">True</property>
+          </object>
+          <packing>
+            <property name="x">429</property>
+            <property name="y">14</property>
+          </packing>
+        </child>
       </object>
     </child>
   </object>
