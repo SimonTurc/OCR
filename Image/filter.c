@@ -474,3 +474,62 @@ int truncate1(float value)
 	return value;
     }
 }
+
+
+
+
+
+void noise_reduction(SDL_Surface* image)
+{
+
+    int width = image -> w;
+    int height = image -> h;
+    int pixel_x = 0;
+    int pixel_y = 0;
+	
+    int offset = 3 / 2;
+
+    for(int j = offset; j < height - offset; j++)
+    {
+	for(int i = offset; i < width - offset ; i++)
+	{
+	    int k = 0;
+	    Uint32 pixel = get_pixel(image, i, j);
+	    
+	    unsigned int  acc[9];
+	    
+	    for(int z = 0; z < 9; z++)
+	    {
+		acc[z] = 0;
+	    }
+	   
+
+
+	    for(int x = 0; x < 3; x++)
+	    {
+		for(int y = 0; y < 3; y++)
+		{
+		    pixel_x = i + x - offset;
+		    pixel_y = j + y - offset;
+
+		     Uint32 pixel2 = get_pixel(image, pixel_x, pixel_y);
+		     Uint8 r, g, b;
+		     SDL_GetRGB(pixel2, image->format, &r, &g, &b);
+
+		    
+		     acc[k] += r;
+		     k++;
+		     
+		}
+	    }
+
+	    array_select_sort(acc, 9);
+
+	    pixel = SDL_MapRGB(image->format, acc[4], acc[4], acc[4]);
+	    put_pixel(image, i, j, pixel);
+       
+	}
+    }
+
+    adjust_border(image);
+}

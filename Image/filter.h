@@ -12,5 +12,6 @@ double var_histo(SDL_Surface *image);
 int truncate1(float value);
 void contrast_adjustment(SDL_Surface* image, float contrast);
 void thickness(SDL_Surface* image);
+void noise_reduction(SDL_Surface* image);
 
 #endif
