@@ -33,6 +33,9 @@ GtkWidget *output_text;
 GtkWidget *image1;
 GtkWidget *input_file;
 GtkWidget *toggle_button;
+GtkWidget *radio_none;
+GtkWidget *radio2;
+GtkWidget *radio3;
 GtkBuilder *builder;
 
 int is_image_loaded = 0;
@@ -46,7 +49,7 @@ void on_input_file_file_set(GtkFileChooserButton *f){
   }
   fputs((const char*)filename, output_file);
   fclose(output_file);
-  int x = 70, y = 5;
+  int x = 116, y = 5;
   if (image1){
     gtk_container_remove(GTK_CONTAINER(fixed), image1);
   }
@@ -129,26 +132,44 @@ int get_text()
 
     if (gtk_toggle_button_get_active ((GtkToggleButton*)toggle_button)){
       thickness(image);
-      printf("\n\nlagrossemoula\n\n");
     }
+
+    if (gtk_toggle_button_get_active ((GtkToggleButton*)radio2)){
+      noise_reduction(image);
+    }
+    
     otsu_value = Otsu_Method(image) +30;
     binarization(image, otsu_value);
     binarization(image_median, otsu_value);
     binarization(image_gaussian, otsu_value);
 
-    compute_filters(image, image_gaussian, image_median);
-    if (var_histo(image_median) > var_histo(image))
-    {
-	angle = find_angle(image_median);
-	image_rotate = rotozoomSurface(image_median, angle, 1.0, 0);
-	replace_new_pixels(image_rotate);
+    if (gtk_toggle_button_get_active ((GtkToggleButton*)radio2)){
+      angle = find_angle(image);
+      image_rotate = rotozoomSurface(image, angle, 1.0, 0);
+      replace_new_pixels(image_rotate);
     }
-    else
-    {
-	angle = find_angle(image);
-	image_rotate = rotozoomSurface(image, angle, 1.0, 0);
-	replace_new_pixels(image_rotate);
+
+    if (gtk_toggle_button_get_active ((GtkToggleButton*)radio3)){
+      compute_filters(image, image_gaussian, image_median);
+      if (var_histo(image_median) > var_histo(image))
+	{
+	  angle = find_angle(image_median);
+	  image_rotate = rotozoomSurface(image_median, angle, 1.0, 0);
+	  replace_new_pixels(image_rotate);
+	}
+      else
+	{
+	  angle = find_angle(image);
+	  image_rotate = rotozoomSurface(image, angle, 1.0, 0);
+	  replace_new_pixels(image_rotate);
+	}
     }
+    else{
+      angle = find_angle(image);
+      image_rotate = rotozoomSurface(image, angle, 1.0, 0);
+      replace_new_pixels(image_rotate);
+    }
+    
     horizontal_histogram(image_rotate);
     nb_lines = number_of_lines(image_rotate);
     
@@ -203,6 +224,9 @@ int main(int argc, char *argv[]){
   run_button = GTK_WIDGET(gtk_builder_get_object(builder, "run_button"));
   output_text = GTK_WIDGET(gtk_builder_get_object(builder, "output_text"));
   toggle_button = GTK_WIDGET(gtk_builder_get_object(builder, "toggle_button"));
+  radio_none = GTK_WIDGET(gtk_builder_get_object(builder, "radio_none"));
+  radio2 = GTK_WIDGET(gtk_builder_get_object(builder, "radio_noise"));
+  radio3 = GTK_WIDGET(gtk_builder_get_object(builder, "radio_decision"));
 
   gtk_widget_show(window);
   gtk_main();
