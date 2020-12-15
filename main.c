@@ -13,6 +13,7 @@
 #include "SDL/SDL.h"
 #include "SDL/SDL_image.h"
 #include "SDL/SDL_rotozoom.h"
+
 #include "Image/basics/sdl_basics.h"
 #include "Image/filter.h"
 #include "Image/segmentation.h"
@@ -181,25 +182,29 @@ int get_text()
     
     for (int i = 1; i <= nb_lines; i++)
     {
-        line = cut_image(image_rotate, i);
-	/*if (i == 1)
-	{
-	     SDL_SaveBMP(line, "out.bmp");
-	}*/
-        vertical_histogram(line);
+      line = cut_image(image_rotate, i);
+      /*if (i == 1)
+      {
+            SDL_SaveBMP(line, "out.bmp");
+      }*/
+      vertical_histogram(line);
+      if(line->h != 0 || line->w != 0)
+      {
         char_per_line = count_char(line);
         for (int j = 1; j <= char_per_line; j++)
         {
-	  fputc((int) extraction(line, j), output_file);
-	  nb_char += 1;
-	  if(addSpace(line,j) == 1){
-	    fputc(32, output_file);
-	    nb_char += 1;
-	  }
+          fputc((int) extraction(line, j), output_file);
+          nb_char += 1;
+          if(addSpace(line,j) == 1)
+          {
+            fputc(32, output_file);
+            nb_char += 1;
+          }
         }
-	nb_char += 1;
-	fputc((int)'\n', output_file);
-        SDL_FreeSurface(line);
+      }
+    nb_char += 1;
+    fputc((int)'\n', output_file);
+    SDL_FreeSurface(line);
     }
     fclose(output_file);
     SDL_FreeSurface(image);

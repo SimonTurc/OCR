@@ -1,5 +1,5 @@
 #MAKEFILE
-CC =gcc -fsanitize=address
+CC =gcc 
 CPPFLAGS = `pkg-config --cflags sdl` -MMD
 CFLAGS = `pkg-config --cflags gtk+-3.0` -Wall -Wextra -Werror -std=c99 -O3 -export-dynamic
 LDFLAGS = -pthread -lpthread

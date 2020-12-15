@@ -89,7 +89,6 @@ char deserialize(double *matrix)
         num_neurons[i] = atoi(str);
     }
     init(num_layers, num_neurons);
-    // printf("weight[%i][%i][%i] : %f\n", i, j, k, lay[i].neu[j].out_weights[k]);
     for (int i = 0; i < num_layers; i++)
     {
         for (int j = 0; j < num_neurons[i]; j++)
